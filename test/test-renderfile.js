@@ -10,6 +10,13 @@ var render = function(source, data) {
 
 describe("Generator", function() {
   describe("#buildData", function() {
+    it("should contain no permissions when none asked for", function() {  
+       var g = new Generator();
+       
+       var manifest = g.buildData();
+       assert.equal(0, manifest.appPermissions.length);
+    });
+
     it("should populate appFullName when user provides a name", function() {  
        var g = new Generator();
        g.appFullName = "test1234";
@@ -102,6 +109,11 @@ describe("Generator", function() {
   }); 
 
   describe("#createManifest", function() {
+    it("should have an empty permissions array when no permissions are set", function() {
+      var manifest = JSON.parse(render("manifest.json", { appPermissions:[] }))
+      assert.equal(0, manifest.permissions.length);
+    });
+    
     // These only really test the template generation
     it("should populate appName.message when appFullname is given", function() {
       var data = {
