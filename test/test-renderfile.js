@@ -26,6 +26,14 @@ describe("Generator", function() {
        assert.equal("test1234", manifest.appDescription);
     });
 
+    it("should set unlimitedStoragePermission when developer wants unlimitedStorage", function() {  
+       var g = new Generator();
+       g.appPermissions = {}; 
+       g.appPermissions.unlimitedStoragePermission = true;
+       
+       var manifest = g.buildData();
+       assert.equal(0, manifest.appPermissions.indexOf("\"unlimitedStoragePermission\""));
+    });
   }); 
 
   describe("#createManifest", function() {
@@ -46,5 +54,14 @@ describe("Generator", function() {
       var manifest = JSON.parse(render(path.join("_locales", "en", "messages.json"), data))
       assert.equal("PauL is Awesome", manifest.appDescription.message);
     });
+
+    it("should populate permissions array with 'unlimitedStorage' when 'unlimitedStoraage' is given", function() {
+      var data = {
+        appPermissions: "\"unlimitedStorage\"" 
+      }
+      var manifest = JSON.parse(render("manifest.json", data));
+      assert.equal(0, manifest.permissions.indexOf("unlimitedStorage"));
+    });
+
  });
 });
