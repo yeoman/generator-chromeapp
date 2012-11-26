@@ -52,7 +52,30 @@ describe("Generator", function() {
        
        var manifest = g.buildData();
        assert.equal(-1, manifest.appPermissions.indexOf("\"identity\""));
+       assert.equal(-1, manifest.appPermissions.indexOf("\"experimental\""));
     });
+
+    it("should set usb permission when developer wants usb", function() {  
+       var g = new Generator();
+       g.appPermissions = {}; 
+       g.appPermissions.usb = true;
+       
+       var manifest = g.buildData();
+       assert.notEqual(-1, manifest.appPermissions.indexOf("\"usb\""));
+       assert.notEqual(-1, manifest.appPermissions.indexOf("\"experimental\""));
+    });
+  
+    it("should not set usb permission when developer doesn't want usb", function() {  
+       var g = new Generator();
+       g.appPermissions = {}; 
+       g.appPermissions.usb = false;
+       
+       var manifest = g.buildData();
+       assert.equal(-1, manifest.appPermissions.indexOf("\"usb\""));
+       assert.equal(-1, manifest.appPermissions.indexOf("\"experimental\""));
+    });
+
+
   }); 
 
   describe("#createManifest", function() {
@@ -83,12 +106,21 @@ describe("Generator", function() {
       assert.equal(0, manifest.permissions.indexOf("unlimitedStorage"));
     });
 
-    it("should populate permissions array with 'idetity' and 'experimental'  when 'identity' is given", function() {
+    it("should populate permissions array with 'identity' and 'experimental'  when 'identity' is given", function() {
       var data = {
         appPermissions: "\"identity\", \"experimental\"" 
       }
       var manifest = JSON.parse(render("manifest.json", data));
       assert.notEqual(-1, manifest.permissions.indexOf("identity"));
+      assert.notEqual(-1, manifest.permissions.indexOf("experimental"));
+    });
+
+    it("should populate permissions array with 'usb' and 'experimental'  when 'usb' is given", function() {
+      var data = {
+        appPermissions: "\"usb\", \"experimental\"" 
+      }
+      var manifest = JSON.parse(render("manifest.json", data));
+      assert.notEqual(-1, manifest.permissions.indexOf("usb"));
       assert.notEqual(-1, manifest.permissions.indexOf("experimental"));
     });
 
