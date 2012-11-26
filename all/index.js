@@ -126,7 +126,7 @@ Generator.prototype.askFor = function askFor( argument ) {
 
     // Complex permission objects
     if((/y/i).test(props.mediagalleryPermission))
-      this.appPermissions.mediaGalleries = { "mediaGalleries" : ["read", "all-auto-detected"] };
+      this.appPermissions.mediaGalleries = { "mediaGalleries" : ["read", "allAutoDetected"] };
 
     if(connections.length > 0)
       this.appPermissions.socket = { 'socket': connections };
@@ -151,7 +151,6 @@ Generator.prototype.buildData = function () {
     "bluetooth" : true,
     "usb": true,
     "identity": true,
-    "mediaGalleries": true,
     "browserTag": true
   };
 
@@ -185,6 +184,8 @@ Generator.prototype.buildData = function () {
 
   if(complexPermissions.length > 0) {
     for(var p = 0; permission = complexPermissions[p]; p ++) {
+      // Complex permissions aren't keyed off the name, remove it.
+      delete data.appPermissions[permission];  
       data.appPermissions.push(permission);
     }
   }

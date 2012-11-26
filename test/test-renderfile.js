@@ -85,7 +85,20 @@ describe("Generator", function() {
        assert.equal(0, manifestObj.length);
     });
 
+   it("should set mediaGalleries permission when developer wants mediaGalleries API", function() {  
+       var g = new Generator();
+       g.appPermissions = {}; 
 
+       /// turns out we can't set the params so we need to assume that params parser is correct
+       g.appPermissions.mediaGalleries = { "mediaGalleries" : ["read", "allAutoDetected"] };
+       
+       var manifest = g.buildData();
+       var manifestObj = manifest.appPermissions;
+       assert.notEqual(false, !!manifestObj[0].mediaGalleries);
+       assert.notEqual(-1, manifestObj[0].mediaGalleries.indexOf("read"));
+       assert.notEqual(-1, manifestObj[0].mediaGalleries.indexOf("allAutoDetected"));
+       assert.equal(1, manifestObj.length);
+    });
   }); 
 
   describe("#createManifest", function() {
@@ -137,5 +150,17 @@ describe("Generator", function() {
       assert.equal(2, manifest.permissions.length);
 
     });
+
+    it("should populate permissions array with 'mediaGalleries' object  when 'mediaGalleries' is given", function() {
+      var data = {
+        appPermissions: [ { "mediaGalleries" : ["read", "allAutoDetected"] } ]
+      }
+      var manifest = JSON.parse(render("manifest.json", data));
+      assert.equal(2, manifest.permissions[0].mediaGalleries.length);
+      assert.notEqual(-1, manifest.permissions[0].mediaGalleries.indexOf("read"));
+      assert.notEqual(-1, manifest.permissions[0].mediaGalleries.indexOf("allAutoDetected"));
+      assert.equal(1, manifest.permissions.length);
+    });
+
  });
 });
