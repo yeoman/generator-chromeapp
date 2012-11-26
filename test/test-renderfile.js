@@ -34,9 +34,29 @@ describe("Generator", function() {
        var manifest = g.buildData();
        assert.equal(0, manifest.appPermissions.indexOf("\"unlimitedStoragePermission\""));
     });
+ 
+    it("should set identity permission when developer wants identity", function() {  
+       var g = new Generator();
+       g.appPermissions = {}; 
+       g.appPermissions.identity = true;
+       
+       var manifest = g.buildData();
+       assert.notEqual(-1, manifest.appPermissions.indexOf("\"identity\""));
+       assert.notEqual(-1, manifest.appPermissions.indexOf("\"experimental\""));
+    });
+  
+    it("should not set identity permission when developer doesn't want identity", function() {  
+       var g = new Generator();
+       g.appPermissions = {}; 
+       g.appPermissions.identity = false;
+       
+       var manifest = g.buildData();
+       assert.equal(-1, manifest.appPermissions.indexOf("\"identity\""));
+    });
   }); 
 
   describe("#createManifest", function() {
+    // These only really test the template generation
     it("should populate appName.message when appFullname is given", function() {
       var data = {
         appFullName: "Paul1",
@@ -61,6 +81,15 @@ describe("Generator", function() {
       }
       var manifest = JSON.parse(render("manifest.json", data));
       assert.equal(0, manifest.permissions.indexOf("unlimitedStorage"));
+    });
+
+    it("should populate permissions array with 'idetity' and 'experimental'  when 'identity' is given", function() {
+      var data = {
+        appPermissions: "\"identity\", \"experimental\"" 
+      }
+      var manifest = JSON.parse(render("manifest.json", data));
+      assert.notEqual(-1, manifest.permissions.indexOf("identity"));
+      assert.notEqual(-1, manifest.permissions.indexOf("experimental"));
     });
 
  });
