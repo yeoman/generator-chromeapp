@@ -1,6 +1,6 @@
 var path = require('path');
 var util = require('util');
-var yeoman = require('../../../../');
+var yeoman = require('yeoman');
 
 module.exports = Generator;
 
@@ -135,7 +135,17 @@ Generator.prototype.askFor = function askFor( argument ) {
   }.bind( this ));
 };
 
-Generator.prototype.writeFiles = function createManifest() {
+Generator.prototype.writeFiles = function() {
+  var data = this.buildData(); 
+  
+  this.directory( '.', '.' );
+
+  this.template( 'app/index.html', path.join( 'app', 'index.html' ), data );
+  this.template( 'app/manifest.json', path.join( 'app', 'manifest.json' ), data );
+  this.template( 'app/_locales/en/messages.json', path.join( 'app', '_locales', 'en' , 'messages.json' ), data );
+}
+
+Generator.prototype.buildData = function () {
 
   var experimental = {
     "bluetooth" : true,
@@ -144,7 +154,6 @@ Generator.prototype.writeFiles = function createManifest() {
     "mediaGalleries": true,
     "browserTag": true
   };
-
 
   // Using object to maintain complex objects rather than strings.
   var complex = {
@@ -171,18 +180,14 @@ Generator.prototype.writeFiles = function createManifest() {
   var data = {
     appFullName: this.appFullName,
     appDescription: this.appDescription,
-    appPermissions: "\"" + permissions.join('","') + "\""
+    appPermissions: permissions
   };
 
   if(complexPermissions.length > 0) {
     for(var p = 0; permission = complexPermissions[p]; p ++) {
-      data.appPermissions += "," + JSON.stringify(permission);
+      data.appPermissions.push(permission);
     }
   }
 
-  this.directory( '.', '.' );
-
-  this.template( 'app/index.html', path.join( 'app', 'index.html' ), data );
-  this.template( 'app/manifest.json', path.join( 'app', 'manifest.json' ), data );
-  this.template( 'app/_locales/en/messages.json', path.join( 'app', '_locales', 'en' , 'messages.json' ), data );
+  return data;
 };

@@ -13,5 +13,5 @@
       "scripts": ["main.js"]
     }
   },
-  "permissions": [<%= appPermissions %>]
+  "permissions": ["<% print(appPermissions.join("\",\"")) %>"]
 }
