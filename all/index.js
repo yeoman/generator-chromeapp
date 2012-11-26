@@ -138,7 +138,7 @@ Generator.prototype.askFor = function askFor( argument ) {
 Generator.prototype.writeFiles = function() {
   var data = this.buildData(); 
   
-this.directory( '.', '.' );
+  this.directory( '.', '.' );
 
   this.template( 'app/index.html', path.join( 'app', 'index.html' ), data );
   this.template( 'app/manifest.json', path.join( 'app', 'manifest.json' ), data );

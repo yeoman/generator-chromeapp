@@ -21,7 +21,8 @@
     "test": "node node_modules/mocha/bin/mocha test/test-*.js"
   },
   "dependencies": {
-    "yeoman": "*" 
+    "yeoman": "*",
+    "grunt": "*"
   },
   "devDependencies": {
     "mocha": "~1.7.1"
