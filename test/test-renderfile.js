@@ -17,10 +17,19 @@ describe("Generator", function() {
        var manifest = g.buildData();
        assert.equal("test1234", manifest.appFullName);
     });
+
+    it("should populate appDescription when user provides a description", function() {  
+       var g = new Generator();
+       g.appDescription = "test1234";
+       
+       var manifest = g.buildData();
+       assert.equal("test1234", manifest.appDescription);
+    });
+
   }); 
 
   describe("#createManifest", function() {
-    it("should populate name when appFullname is given", function() {
+    it("should populate appName.message when appFullname is given", function() {
       var data = {
         appFullName: "Paul1",
         appDescription: "TEST"
@@ -28,5 +37,14 @@ describe("Generator", function() {
       var manifest = JSON.parse(render(path.join("_locales", "en", "messages.json"), data))
       assert.equal("Paul1", manifest.appName.message);
     });
-  });
+    
+    it("should populate appDescription.message when appDescription is given", function() {
+      var data = {
+        appFullName: "TEST",
+        appDescription: "PauL is Awesome"
+      }
+      var manifest = JSON.parse(render(path.join("_locales", "en", "messages.json"), data))
+      assert.equal("PauL is Awesome", manifest.appDescription.message);
+    });
+ });
 });
