@@ -13,5 +13,5 @@
       "scripts": ["main.js"]
     }
   },
-  "permissions": ["<% print(appPermissions.join("\",\"")) %>"]
+  "permissions": <%= JSON.stringify(appPermissions) %>
 }
