@@ -29,10 +29,12 @@ describe("Generator", function() {
     it("should set unlimitedStoragePermission when developer wants unlimitedStorage", function() {  
        var g = new Generator();
        g.appPermissions = {}; 
-       g.appPermissions.unlimitedStoragePermission = true;
+       g.appPermissions.unlimitedStorage = true;
        
        var manifest = g.buildData();
-       assert.equal(0, manifest.appPermissions.indexOf("\"unlimitedStoragePermission\""));
+       var manifestObj = manifest.appPermissions;
+       assert.equal(0, manifestObj.indexOf("unlimitedStorage"));
+       assert.equal(1, manifestObj.length);
     });
  
     it("should set identity permission when developer wants identity", function() {  
@@ -41,8 +43,10 @@ describe("Generator", function() {
        g.appPermissions.identity = true;
        
        var manifest = g.buildData();
-       assert.notEqual(-1, manifest.appPermissions.indexOf("\"identity\""));
-       assert.notEqual(-1, manifest.appPermissions.indexOf("\"experimental\""));
+       var manifestObj = manifest.appPermissions;
+       assert.notEqual(-1, manifestObj.indexOf("identity"));
+       assert.notEqual(-1, manifestObj.indexOf("experimental"));
+       assert.equal(2, manifestObj.length);
     });
   
     it("should not set identity permission when developer doesn't want identity", function() {  
@@ -51,8 +55,10 @@ describe("Generator", function() {
        g.appPermissions.identity = false;
        
        var manifest = g.buildData();
-       assert.equal(-1, manifest.appPermissions.indexOf("\"identity\""));
-       assert.equal(-1, manifest.appPermissions.indexOf("\"experimental\""));
+       var manifestObj = manifest.appPermissions;
+       assert.equal(-1, manifestObj.indexOf("identity"));
+       assert.equal(-1, manifestObj.indexOf("experimental"));
+       assert.equal(0, manifestObj.length);
     });
 
     it("should set usb permission when developer wants usb", function() {  
@@ -61,8 +67,10 @@ describe("Generator", function() {
        g.appPermissions.usb = true;
        
        var manifest = g.buildData();
-       assert.notEqual(-1, manifest.appPermissions.indexOf("\"usb\""));
-       assert.notEqual(-1, manifest.appPermissions.indexOf("\"experimental\""));
+       var manifestObj = manifest.appPermissions;
+       assert.notEqual(-1, manifestObj.indexOf("usb"));
+       assert.notEqual(-1, manifestObj.indexOf("experimental"));
+       assert.equal(2, manifestObj.length);
     });
   
     it("should not set usb permission when developer doesn't want usb", function() {  
@@ -71,8 +79,10 @@ describe("Generator", function() {
        g.appPermissions.usb = false;
        
        var manifest = g.buildData();
-       assert.equal(-1, manifest.appPermissions.indexOf("\"usb\""));
-       assert.equal(-1, manifest.appPermissions.indexOf("\"experimental\""));
+       var manifestObj = manifest.appPermissions;
+       assert.equal(-1, manifestObj.indexOf("usb"));
+       assert.equal(-1, manifestObj.indexOf("experimental"));
+       assert.equal(0, manifestObj.length);
     });
 
 
@@ -100,29 +110,32 @@ describe("Generator", function() {
 
     it("should populate permissions array with 'unlimitedStorage' when 'unlimitedStoraage' is given", function() {
       var data = {
-        appPermissions: "\"unlimitedStorage\"" 
+        appPermissions: ["unlimitedStorage"] 
       }
       var manifest = JSON.parse(render("manifest.json", data));
       assert.equal(0, manifest.permissions.indexOf("unlimitedStorage"));
+      assert.equal(1, manifest.permissions.length);
     });
 
     it("should populate permissions array with 'identity' and 'experimental'  when 'identity' is given", function() {
       var data = {
-        appPermissions: "\"identity\", \"experimental\"" 
+        appPermissions: ["identity", "experimental"] 
       }
       var manifest = JSON.parse(render("manifest.json", data));
       assert.notEqual(-1, manifest.permissions.indexOf("identity"));
       assert.notEqual(-1, manifest.permissions.indexOf("experimental"));
+      assert.equal(2, manifest.permissions.length);
     });
 
     it("should populate permissions array with 'usb' and 'experimental'  when 'usb' is given", function() {
       var data = {
-        appPermissions: "\"usb\", \"experimental\"" 
+        appPermissions: ["usb", "experimental"] 
       }
       var manifest = JSON.parse(render("manifest.json", data));
       assert.notEqual(-1, manifest.permissions.indexOf("usb"));
       assert.notEqual(-1, manifest.permissions.indexOf("experimental"));
-    });
+      assert.equal(2, manifest.permissions.length);
 
+    });
  });
 });

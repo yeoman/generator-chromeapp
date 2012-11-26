@@ -180,12 +180,12 @@ Generator.prototype.buildData = function () {
   var data = {
     appFullName: this.appFullName,
     appDescription: this.appDescription,
-    appPermissions: "\"" + permissions.join('","') + "\""
+    appPermissions: permissions
   };
 
   if(complexPermissions.length > 0) {
     for(var p = 0; permission = complexPermissions[p]; p ++) {
-      data.appPermissions += "," + JSON.stringify(permission);
+      data.appPermissions.push(permission);
     }
   }
 
