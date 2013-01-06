@@ -1,6 +1,6 @@
 var path = require('path');
 var util = require('util');
-var yeoman = require('yeoman');
+var yeoman = require('yeoman-generators');
 
 module.exports = Generator;
 
@@ -44,7 +44,7 @@ Generator.prototype.askFor = function askFor( argument ) {
     name: 'webviewPermission',
     message: 'Would you like to use the webview in your app',
     default: "Y/n",
-    warning: 'You can change the permissions' 
+    warning: 'You can change the permissions'
   },
   {
     name: 'videoCapturePermission',
@@ -117,7 +117,7 @@ Generator.prototype.askFor = function askFor( argument ) {
     this.appPermissions.webview = (/y/i).test(props.webviewPermission);
     this.appPermissions.audioCapture = (/y/i).test(props.audioCapturePermission);
     this.appPermissions.videoCapture = (/y/i).test(props.videoCapturePermission);
-    
+
     var connections = [];
     if((/y/i).test(props.udpbindPermission)) connections.push("udp-bind::8899");
     if((/y/i).test(props.udpsendPermission)) connections.push("udp-send-to::8899");
@@ -136,8 +136,8 @@ Generator.prototype.askFor = function askFor( argument ) {
 };
 
 Generator.prototype.writeFiles = function() {
-  var data = this.buildData(); 
-  
+  var data = this.buildData();
+
   this.directory( '.', '.' );
 
   this.template( 'app/index.html', path.join( 'app', 'index.html' ), data );
@@ -184,7 +184,7 @@ Generator.prototype.buildData = function () {
   if(complexPermissions.length > 0) {
     for(var p = 0; permission = complexPermissions[p]; p ++) {
       // Complex permissions aren't keyed off the name, remove it.
-      delete data.appPermissions[permission];  
+      delete data.appPermissions[permission];
       data.appPermissions.push(permission);
     }
   }
