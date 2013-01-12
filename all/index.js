@@ -41,8 +41,8 @@ Generator.prototype.askFor = function askFor( argument ) {
     warning: 'You can change the permissions'
   },
   {
-    name: 'browserTagPermission',
-    message: 'Would you like to use the Browser Tag in your app',
+    name: 'webviewPermission',
+    message: 'Would you like to use the webview in your app',
     default: "Y/n",
     warning: 'You can change the permissions' 
   },
@@ -114,7 +114,7 @@ Generator.prototype.askFor = function askFor( argument ) {
     this.appPermissions.unlimitedStorage = (/y/i).test(props.unlimitedStoragePermission);
     this.appPermissions.usb = (/y/i).test(props.usbPermission);
     this.appPermissions.bluetooth = (/y/i).test(props.bluetoothPermission);
-    this.appPermissions.browserTag = (/y/i).test(props.browserTagPermission);
+    this.appPermissions.webview = (/y/i).test(props.webviewPermission);
     this.appPermissions.audioCapture = (/y/i).test(props.audioCapturePermission);
     this.appPermissions.videoCapture = (/y/i).test(props.videoCapturePermission);
     
@@ -150,8 +150,7 @@ Generator.prototype.buildData = function () {
   var experimental = {
     "bluetooth" : true,
     "usb": true,
-    "identity": true,
-    "browserTag": true
+    "identity": true
   };
 
   // Using object to maintain complex objects rather than strings.
