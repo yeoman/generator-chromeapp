@@ -2,24 +2,40 @@
 'use strict';
 var assert = require('assert');
 var path = require('path');
-var yeoman = require('yeoman-generator');
-var Generator = require('../app');
+var helpers = require('yeoman-generator').test;
 
-var render = function(source, data) {
-  return grunt.template.process(grunt.file.read(path.join('all', 'templates', 'app', source)), data);
-};
+describe('Chrome App Generator', function () {
+  beforeEach(function (done) {
+    helpers.testDirectory(path.join(__dirname, 'temp'), function (err) {
+      if (err) {
+        return done(err);
+      }
 
-describe('Generator', function () {
+      this.chromeapp = helpers.createGenerator('chromeapp:app', [
+        '../../app', [
+          helpers.createDummyGenerator(),
+          'mocha:app'
+        ]
+      ]);
+      done();
+    }.bind(this));
+  });
+
+  it('the generator can be required without throwing', function () {
+    // not testing the actual run of generators yet
+    this.chromeapp = require('../app');
+  });
+
   describe('#buildData', function () {
     it('should contain no permissions when none asked for', function () {
-       var g = new Generator();
+       var g = this.chromeapp;
 
        var manifest = g.buildData();
        assert.equal(0, manifest.appPermissions.length);
     });
 
     it('should populate appFullName when user provides a name', function () {
-       var g = new Generator();
+       var g = this.chromeapp;
        g.appFullName = 'test1234';
 
        var manifest = g.buildData();
@@ -27,7 +43,7 @@ describe('Generator', function () {
     });
 
     it('should populate appDescription when user provides a description', function () {
-       var g = new Generator();
+       var g = this.chromeapp;
        g.appDescription = 'test1234';
 
        var manifest = g.buildData();
@@ -35,7 +51,7 @@ describe('Generator', function () {
     });
 
     it('should set unlimitedStoragePermission when developer wants unlimitedStorage', function () {
-       var g = new Generator();
+       var g = this.chromeapp;
        g.appPermissions = {};
        g.appPermissions.unlimitedStorage = true;
 
@@ -46,7 +62,7 @@ describe('Generator', function () {
     });
 
     it('should set identity permission when developer wants identity', function () {
-       var g = new Generator();
+       var g = this.chromeapp;
        g.appPermissions = {};
        g.appPermissions.identity = true;
 
@@ -58,7 +74,7 @@ describe('Generator', function () {
     });
 
     it('should not set identity permission when developer doesn\'t want identity', function () {
-       var g = new Generator();
+       var g = this.chromeapp;
        g.appPermissions = {};
        g.appPermissions.identity = false;
 
@@ -70,7 +86,7 @@ describe('Generator', function () {
     });
 
     it('should set usb permission when developer wants usb', function () {
-       var g = new Generator();
+       var g = this.chromeapp;
        g.appPermissions = {};
        g.appPermissions.usb = true;
 
@@ -82,7 +98,7 @@ describe('Generator', function () {
     });
 
     it('should not set usb permission when developer doesn\'t want usb', function () {
-       var g = new Generator();
+       var g = this.chromeapp;
        g.appPermissions = {};
        g.appPermissions.usb = false;
 
@@ -94,7 +110,7 @@ describe('Generator', function () {
     });
 
    it('should set mediaGalleries permission when developer wants mediaGalleries API', function () {
-       var g = new Generator();
+       var g = this.chromeapp;
        g.appPermissions = {};
 
        /// turns out we can't set the params so we need to assume that params parser is correct
@@ -110,69 +126,119 @@ describe('Generator', function () {
   });
 
   describe('#createManifest', function() {
-    it('should have an empty permissions array when no permissions are set', function () {
-      var manifest = JSON.parse(render('manifest.json', { appPermissions:[] }));
-      assert.equal(0, manifest.permissions.length);
+    it('should have an empty permissions array when no permissions are set', function (done) {
+      var expected = [
+        ['app/manifest.json', /"permissions": \[\]/],
+      ];
+
+      helpers.mockPrompt(this.chromeapp, {
+        'name': 'temp',
+      });
+
+      this.chromeapp.options['skip-install'] = true;
+      this.chromeapp.run({}, function () {
+        helpers.assertFiles(expected);
+        done();
+      });
     });
 
     // These only really test the template generation
-    it('should populate appName.message when appFullname is given', function () {
-      var data = {
+    it('should populate appName.message when appFullname is given', function (done) {
+      var expected = [
+        ['app/_locales/en/messages.json', /("message": "Paul1")/]
+      ];
+
+      helpers.mockPrompt(this.chromeapp, {
         appFullName: 'Paul1',
         appDescription: 'TEST'
-      };
-      var manifest = JSON.parse(render(path.join('_locales', 'en', 'messages.json'), data));
-      assert.equal('Paul1', manifest.appName.message);
+      });
+
+      this.chromeapp.options['skip-install'] = true;
+      this.chromeapp.run({}, function () {
+        helpers.assertFiles(expected);
+        done();
+      });
     });
 
-    it('should populate appDescription.message when appDescription is given', function () {
-      var data = {
+    it('should populate appDescription.message when appDescription is given', function (done) {
+      var expected = [
+        ['app/_locales/en/messages.json', /"message": "PauL is Awesome"/]
+      ];
+
+      helpers.mockPrompt(this.chromeapp, {
         appFullName: 'TEST',
         appDescription: 'PauL is Awesome'
-      };
-      var manifest = JSON.parse(render(path.join('_locales', 'en', 'messages.json'), data));
-      assert.equal('PauL is Awesome', manifest.appDescription.message);
+      });
+
+      this.chromeapp.options['skip-install'] = true;
+      this.chromeapp.run({}, function () {
+        helpers.assertFiles(expected);
+        done();
+      });
     });
 
-    it('should populate permissions array with "unlimitedStorage" when "unlimitedStoraage" is given', function () {
-      var data = {
-        appPermissions: ['unlimitedStorage']
-      };
-      var manifest = JSON.parse(render('manifest.json', data));
-      assert.equal(0, manifest.permissions.indexOf('unlimitedStorage'));
-      assert.equal(1, manifest.permissions.length);
+    it('should populate permissions array with "unlimitedStorage" when "unlimitedStoraage" is given', function (done) {
+      var expected = [
+        ['app/manifest.json', /"permissions": \[\s+"unlimitedStorage"\s+\]/]
+      ];
+
+      helpers.mockPrompt(this.chromeapp, {
+        unlimitedStoragePermission: 'Y'
+      });
+
+      this.chromeapp.options['skip-install'] = true;
+      this.chromeapp.run({}, function () {
+        helpers.assertFiles(expected);
+        done();
+      });
     });
 
-    it('should populate permissions array with "identity" and "experimental" when "identity" is given', function () {
-      var data = {
-        appPermissions: ['identity', 'experimental']
-      };
-      var manifest = JSON.parse(render('manifest.json', data));
-      assert.notEqual(-1, manifest.permissions.indexOf('identity'));
-      assert.notEqual(-1, manifest.permissions.indexOf('experimental'));
-      assert.equal(2, manifest.permissions.length);
+    it('should populate permissions array with "identity" and "experimental" when "identity" is given', function (done) {
+      var expected = [
+        ['app/manifest.json', /"permissions": \[\s+"identity",\s+"experimental"\s+\]/]
+      ];
+
+      helpers.mockPrompt(this.chromeapp, {
+        identityPermission: 'Y'
+      });
+
+      this.chromeapp.options['skip-install'] = true;
+      this.chromeapp.run({}, function () {
+        helpers.assertFiles(expected);
+        done();
+      });
     });
 
-    it('should populate permissions array with "usb" and "experimental"  when "usb" is given', function () {
-      var data = {
-        appPermissions: ['usb', 'experimental']
-      };
-      var manifest = JSON.parse(render('manifest.json', data));
-      assert.notEqual(-1, manifest.permissions.indexOf('usb'));
-      assert.notEqual(-1, manifest.permissions.indexOf('experimental'));
-      assert.equal(2, manifest.permissions.length);
+    it('should populate permissions array with "usb" and "experimental"  when "usb" is given', function (done) {
+      var expected = [
+        ['app/manifest.json', /"permissions": \[\s+"usb",\s+"experimental"\s+\]/]
+      ];
 
+      helpers.mockPrompt(this.chromeapp, {
+        usbPermission: 'Y'
+      });
+
+      this.chromeapp.options['skip-install'] = true;
+      this.chromeapp.run({}, function () {
+        helpers.assertFiles(expected);
+        done();
+      });
     });
 
-    it('should populate permissions array with "mediaGalleries" object when "mediaGalleries" is given', function () {
-      var data = {
-        appPermissions: [{ 'mediaGalleries': ['read', 'allAutoDetected'] }]
-      };
-      var manifest = JSON.parse(render('manifest.json', data));
-      assert.equal(2, manifest.permissions[0].mediaGalleries.length);
-      assert.notEqual(-1, manifest.permissions[0].mediaGalleries.indexOf('read'));
-      assert.notEqual(-1, manifest.permissions[0].mediaGalleries.indexOf('allAutoDetected'));
-      assert.equal(1, manifest.permissions.length);
+    it('should populate permissions array with "mediaGalleries" object when "mediaGalleries" is given', function (done) {
+      var expected = [
+        ['app/manifest.json', /"permissions": \[\s+{\s+"mediaGalleries": \[\s+"read",\s+"allAutoDetected"\s+\]\s+}\s+\]/]
+      ];
+
+      helpers.mockPrompt(this.chromeapp, {
+        mediagalleryPermission: 'Y'
+      });
+
+      this.chromeapp.options['skip-install'] = true;
+      this.chromeapp.run({}, function () {
+        helpers.assertFiles(expected);
+        done();
+      });
     });
- });
+  });
 });
