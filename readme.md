@@ -9,8 +9,14 @@ Maintainer: [Paul Kinlan](https://github.com/PaulKinlan)
 
 Install: `npm install -g generator-chromeapp`
 
-Usage: `yeoman init chromeapp`
+Usage: `yo chromeapp`
 
+## Options
+
+* `--skip-install`
+
+  Skips the automatic execution of `bower` and `npm` after
+  scaffolding has finished.
 
 ## Contribute
 
