@@ -1,0 +1,17 @@
+{
+    "name": "__MSG_appName__",
+    "version": "1",
+    "manifest_version": 2,
+    "description": "__MSG_appDescription__",
+    "icons": {
+        "16": "images/icon-16.png",
+        "128": "images/icon-128.png"
+    },
+    "default_locale": "en",
+    "app": {
+        "background": {
+          "scripts": ["scripts/main.js"]
+        }
+    },
+    "permissions": <%= JSON.stringify(appPermissions, null, 4).replace(/\n/g, '\n    ') %>
+}

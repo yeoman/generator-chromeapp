@@ -2,17 +2,32 @@ var path = require('path');
 var util = require('util');
 var yeoman = require('yeoman-generator');
 
-module.exports = Generator;
-
-function Generator() {
+var ChromeAppGenerator = module.exports = function ChromeAppGenerator(args, options, config) {
   yeoman.generators.Base.apply(this, arguments);
   this.sourceRoot(path.join(__dirname, 'templates'));
   this.appPermissions = {};
-}
 
-util.inherits(Generator, yeoman.generators.NamedBase);
+  // setup the test-framework property, Gruntfile template will need this
+  this.testFramework = options['test-framework'] || 'mocha';
 
-Generator.prototype.askFor = function askFor(argument) {
+  // for hooks to resolve on mocha by default
+  if (!options['test-framework']) {
+    options['test-framework'] = 'mocha';
+  }
+
+  // resolved to mocha by default (could be switched to jasmine for instance)
+  this.hookFor('test-framework', { as: 'app' });
+
+  this.on('end', function () {
+    this.installDependencies({ skipInstall: options['skip-install'] });
+  });
+
+  this.pkg = JSON.parse(this.readFileAsString(path.join(__dirname, '../package.json')));
+};
+
+util.inherits(ChromeAppGenerator, yeoman.generators.NamedBase);
+
+ChromeAppGenerator.prototype.askFor = function askFor(argument) {
   var cb = this.async();
 
   var prompts = [{
@@ -20,67 +35,80 @@ Generator.prototype.askFor = function askFor(argument) {
     message: 'What would you like to call this application?',
     default: 'myChromeApp',
     warning: 'You can change the default application name.'
-  }, {
+  },
+  {
     name: 'appDescription',
     message: 'How would you like to describe this application?',
     default: 'My Chrome app',
     warning: 'You can change the default app description.'
-  }, {
-    name: 'unlimtedStoragePermission',
+  },
+  {
+    name: 'unlimitedStoragePermission',
     message: 'Would you like to use Storage in your app',
     default: 'Y/n',
     warning: 'You can change the permissions'
-  }, {
+  },
+  {
     name: 'identityPermission',
     message: 'Would you like to the experimental Identity API in your app',
     default: 'Y/n',
     warning: 'You can change the permissions'
-  }, {
+  },
+  {
     name: 'webviewPermission',
     message: 'Would you like to use the webview in your app',
     default: 'Y/n',
     warning: 'You can change the permissions'
-  }, {
+  },
+  {
     name: 'videoCapturePermission',
     message: 'Would you like to use the Camera in your app',
     default: 'Y/n',
     warning: 'You can change the permissions'
-  }, {
+  },
+  {
     name: 'audioCapturePermission',
     message: 'Would you like to use the Microphone in your app',
     default: 'Y/n',
     warning: 'You can change the permissions'
-  }, {
+  },
+  {
     name: 'usbPermission',
     message: 'Would you like to use USB in your app',
     default: 'Y/n',
     warning: 'You can change the permissions'
-  }, {
+  },
+  {
     name: 'bluetoothPermission',
     message: 'Would you like to use Bluetooth in your app',
     default: 'Y/n',
     warning: 'You can change the permissions'
-  }, {
+  },
+  {
     name: 'serialPermission',
     message: 'Would you like to use the Serial Port in your app',
     default: 'Y/n',
     warning: 'You can change the permissions'
-  }, {
+  },
+  {
     name: 'udpsendPermission',
     message: 'Would you like to send UDP data in your app',
     default: 'Y/n',
     warning: 'You can change the permissions'
-  }, {
+  },
+  {
     name: 'udpbindPermission',
     message: 'Would you like to receive UDP data in your app',
     default: 'Y/n',
     warning: 'You can change the permissions'
-  }, {
+  },
+  {
     name: 'tcpPermission',
     message: 'Would you like to use TCP in your app?',
     default: 'Y/n',
     warning: 'You can change the permissions'
-  }, {
+  },
+  {
     name: 'mediagalleryPermission',
     message: 'Would you like to use the Media Gallery API in your app?',
     default: 'Y/n',
@@ -129,16 +157,28 @@ Generator.prototype.askFor = function askFor(argument) {
   }.bind( this ));
 };
 
-Generator.prototype.writeFiles = function () {
+ChromeAppGenerator.prototype.packages = function packages() {
+  this.copy('_package.json', 'package.json');
+  this.copy('_component.json', 'component.json');
+  this.copy('bowerrc', '.bowerrc');
+  this.copy('editorconfig', '.editorconfig');
+  this.copy('gitignore', '.gitignore');
+  this.copy('gitattributes', '.gitattributes');
+  this.copy('jshintrc', '.jshintrc');
+  this.template('Gruntfile.js');
+};
+
+ChromeAppGenerator.prototype.app = function app() {
   var data = this.buildData();
 
-  this.directory('.', '.');
-  this.template('app/index.html', path.join('app', 'index.html'), data);
-  this.template('app/manifest.json', path.join('app', 'manifest.json'), data);
-  this.template('app/_locales/en/messages.json', path.join('app', '_locales', 'en', 'messages.json' ), data);
-}
+  this.directory('images', 'app/images');
+  this.directory('scripts', 'app/scripts');
+  this.template('index.html', 'app/index.html', data);
+  this.template('manifest.json', 'app/manifest.json', data);
+  this.template('_locales/en/messages.json', 'app/_locales/en/messages.json', data);
+};
 
-Generator.prototype.buildData = function () {
+ChromeAppGenerator.prototype.buildData = function buildData() {
   var experimental = {
     'bluetooth' : true,
     'usb': true,
