@@ -1,6 +1,6 @@
 {
   "name": "generator-chromeapp",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Yeoman generator for Chrome App",
   "keywords": [
     "yeoman-generator",
@@ -20,10 +20,13 @@
     "test": "mocha --reporter spec"
   },
   "dependencies": {
-    "yeoman-generator": "~0.10.5"
+    "yeoman-generator": "~0.12.0"
+  },
+  "peerDependencies": {
+    "generator-mocha": "~0.1.1"
   },
   "devDependencies": {
-    "mocha": "~1.9.0"
+    "mocha": "~1.10.0"
   },
   "engines": {
     "node": ">=0.8.0"
