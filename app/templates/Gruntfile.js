@@ -8,7 +8,7 @@ var mountFolder = function (connect, dir) {
 // # Globbing
 // for performance reasons we're only matching one level down:
 // 'test/spec/{,*/}*.js'
-// use this if you want to match all subfolders:
+// use this if you want to recursively match all subfolders:
 // 'test/spec/**/*.js'
 
 module.exports = function (grunt) {
@@ -24,6 +24,9 @@ module.exports = function (grunt) {
     grunt.initConfig({
         yeoman: yeomanConfig,
         watch: {
+            options: {
+                spawn: false
+            },
             coffee: {
                 files: ['<%%= yeoman.app %>/scripts/{,*/}*.coffee'],
                 tasks: ['coffee:dist']
@@ -35,7 +38,7 @@ module.exports = function (grunt) {
             compass: {
                 files: ['<%%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
                 tasks: ['compass:server']
-            },
+            }
         },
         connect: {
             options: {
@@ -76,7 +79,7 @@ module.exports = function (grunt) {
                 '<%%= yeoman.app %>/scripts/{,*/}*.js',
                 'test/spec/{,*/}*.js'
             ]
-        },
+        },<% if (testFramework === 'mocha') { %>
         mocha: {
             all: {
                 options: {
@@ -84,7 +87,14 @@ module.exports = function (grunt) {
                     urls: ['http://localhost:<%%= connect.options.port %>/index.html']
                 }
             }
-        },
+        },<% } else if (testFramework === 'jasmine') { %>
+        jasmine: {
+            all: {
+                options: {
+                    specs: 'test/spec/{,*/}*.js'
+                }
+            }
+        },<% } %>
         coffee: {
             dist: {
                 files: [{
@@ -109,11 +119,14 @@ module.exports = function (grunt) {
             options: {
                 sassDir: '<%%= yeoman.app %>/styles',
                 cssDir: '.tmp/styles',
+                generatedImagesDir: '.tmp/images/generated',
                 imagesDir: '<%%= yeoman.app %>/images',
                 javascriptsDir: '<%%= yeoman.app %>/scripts',
                 fontsDir: '<%%= yeoman.app %>/styles/fonts',
-                importPath: 'app/components',
-                relativeAssets: true
+                importPath: '<%%= yeoman.app %>/bower_components',
+                httpImagesPath: '/images',
+                httpGeneratedImagesPath: '/images/generated',
+                relativeAssets: false
             },
             dist: {},
             server: {
@@ -130,23 +143,29 @@ module.exports = function (grunt) {
         // not enabled since usemin task does concat and uglify
         // check index.html to edit your build targets
         // enable this task if you prefer defining your build targets here
-        /*uglify: {
-            dist: {}
-        },*/
-        useminPrepare: {
-            html: [
-                '<%%= yeoman.app %>/index.html'
-            ],
-            options: {
-                dest: '<%%= yeoman.dist %>'
+        uglify: {
+            dist: {
+                files: [{
+                    '<%%= yeoman.dist %>/scripts/main.js': [
+                        '<%%= yeoman.app %>/scripts/main.js'
+                    ]
+                }]
             }
         },
+        useminPrepare: {
+            options: {
+                dest: '<%%= yeoman.dist %>'
+            },
+            html: [
+                '<%%= yeoman.app %>/index.html'
+            ]
+        },
         usemin: {
-            html: ['<%%= yeoman.dist %>/{,*/}*.html'],
-            css: ['<%%= yeoman.dist %>/styles/{,*/}*.css'],
             options: {
                 dirs: ['<%%= yeoman.dist %>']
-            }
+            },
+            html: ['<%%= yeoman.dist %>/{,*/}*.html'],
+            css: ['<%%= yeoman.dist %>/styles/{,*/}*.css']
         },
         imagemin: {
             dist: {
@@ -208,9 +227,17 @@ module.exports = function (grunt) {
                     cwd: '<%%= yeoman.app %>',
                     dest: '<%%= yeoman.dist %>',
                     src: [
-                        '*.{ico,txt}',
+                        '*.{ico,png,txt}',
                         'images/{,*/}*.{webp,gif}',
-                        '_locales/{,*/}*.json'
+                        '_locales/{,*/}*.json',
+                        'manifest.json'
+                    ]
+                }, {
+                    expand: true,
+                    cwd: '.tmp/images',
+                    dest: '<%%= yeoman.dist %>/images',
+                    src: [
+                        'generated/*'
                     ]
                 }]
             }
@@ -229,25 +256,24 @@ module.exports = function (grunt) {
                 'compass:dist',
                 'imagemin',
                 'svgmin',
-                'htmlmin',
-                'cssmin'
+                'htmlmin'
             ]
         }
     });
 
-    grunt.renameTask('regarde', 'watch');
-
     grunt.registerTask('test', [
         'clean:server',
         'concurrent:test',
-        'connect:test',
-        'mocha'
+        'connect:test',<% if (testFramework === 'mocha') { %>
+        'mocha'<% } else if (testFramework === 'jasmine') { %>
+        'jasmine'<% } %>
     ]);
 
     grunt.registerTask('build', [
         'clean:dist',
         'useminPrepare',
         'concurrent:dist',
+        'cssmin',
         'concat',
         'uglify',
         'copy',

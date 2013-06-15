@@ -25,7 +25,7 @@ var ChromeAppGenerator = module.exports = function ChromeAppGenerator(args, opti
   this.pkg = JSON.parse(this.readFileAsString(path.join(__dirname, '../package.json')));
 };
 
-util.inherits(ChromeAppGenerator, yeoman.generators.NamedBase);
+util.inherits(ChromeAppGenerator, yeoman.generators.Base);
 
 ChromeAppGenerator.prototype.askFor = function askFor(argument) {
   var cb = this.async();
@@ -141,7 +141,8 @@ ChromeAppGenerator.prototype.askFor = function askFor(argument) {
 
 ChromeAppGenerator.prototype.packages = function packages() {
   this.copy('_package.json', 'package.json');
-  this.copy('_component.json', 'component.json');
+  this.mkdir('app/bower_components');
+  this.copy('_bower.json', 'bower.json');
   this.copy('bowerrc', '.bowerrc');
   this.copy('editorconfig', '.editorconfig');
   this.copy('gitignore', '.gitignore');
@@ -155,6 +156,7 @@ ChromeAppGenerator.prototype.app = function app() {
 
   this.directory('images', 'app/images');
   this.directory('scripts', 'app/scripts');
+  this.directory('styles', 'app/styles');
   this.template('index.html', 'app/index.html', data);
   this.template('manifest.json', 'app/manifest.json', data);
   this.template('_locales/en/messages.json', 'app/_locales/en/messages.json', data);
