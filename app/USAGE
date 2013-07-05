@@ -1,0 +1,13 @@
+Description:
+    Create a chromeapp boilerplate generator that creates everything for you. Have fun.
+
+Example:
+    yo chromeapp $NAME[OPTIONAL]
+
+    This will create:
+        Gruntfile.js: Configuration for the task runner.
+        bower.json: Front-end packages installed by bower.
+        package.json: Development packages installed by npm.
+
+        app/: Your application files.
+        test/: Unit tests for your application.

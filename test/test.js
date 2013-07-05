@@ -26,6 +26,34 @@ describe('Chrome App Generator', function () {
     this.chromeapp = require('../app');
   });
 
+  describe('#expectedFiles', function() {
+    it('should create expected files', function (done) {
+    var expected = [
+      'app/bower_components',
+      ['bower.json', /"name": "temp"/],
+      ['package.json', /"name": "temp"/],
+      'Gruntfile.js',
+      'app/manifest.json',
+      'app/_locales/en/messages.json',
+      'app/images/icon-128.png',
+      'app/images/icon-16.png',
+      'app/styles/main.css',
+      'app/scripts/main.js',
+      'app/index.html'
+    ];
+
+    helpers.mockPrompt(this.chromeapp, {
+      'name': 'temp',
+    });
+
+    this.chromeapp.options['skip-install'] = true;
+    this.chromeapp.run({}, function () {
+      helpers.assertFiles(expected);
+      done();
+    });
+  });
+  });
+
   describe('#buildData', function () {
     it('should contain no permissions when none asked for', function () {
        var g = this.chromeapp;
