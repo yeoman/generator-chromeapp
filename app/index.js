@@ -41,94 +41,91 @@ ChromeAppGenerator.prototype.askFor = function askFor(argument) {
     default: 'My Chrome app'
   },
   {
-    type: 'confirm',
-    name: 'unlimitedStoragePermission',
-    message: 'Would you like to use Storage in your app?'
-  },
-  {
-    type: 'confirm',
-    name: 'identityPermission',
-    message: 'Would you like to the experimental Identity API in your app?',
-  },
-  {
-    type: 'confirm',
-    name: 'webviewPermission',
-    message: 'Would you like to use the webview in your app?'
-  },
-  {
-    type: 'confirm',
-    name: 'videoCapturePermission',
-    message: 'Would you like to use the Camera in your app?'
-  },
-  {
-    type: 'confirm',
-    name: 'audioCapturePermission',
-    message: 'Would you like to use the Microphone in your app?'
-  },
-  {
-    type: 'confirm',
-    name: 'usbPermission',
-    message: 'Would you like to use USB in your app?'
-  },
-  {
-    type: 'confirm',
-    name: 'bluetoothPermission',
-    message: 'Would you like to use Bluetooth in your app?'
-  },
-  {
-    type: 'confirm',
-    name: 'serialPermission',
-    message: 'Would you like to use the Serial Port in your app?'
-  },
-  {
-    type: 'confirm',
-    name: 'udpsendPermission',
-    message: 'Would you like to send UDP data in your app?'
-  },
-  {
-    type: 'confirm',
-    name: 'udpbindPermission',
-    message: 'Would you like to receive UDP data in your app?'
-  },
-  {
-    type: 'confirm',
-    name: 'tcpPermission',
-    message: 'Would you like to use TCP in your app?'
-  },
-  {
-    type: 'confirm',
-    name: 'mediagalleryPermission',
-    message: 'Would you like to use the Media Gallery API in your app?'
+    type: 'checkbox',
+    name: 'permissions',
+    message: 'Which permissions do you want your app to use?',
+    choices: [
+      {
+        value: 'unlimitedStorage',
+        name: 'Storage'
+      },
+      {
+        value: 'identity',
+        name: 'Experimental Identity API',
+      },
+      {
+        value: 'webview',
+        name: 'Webview'
+      },
+      {
+        value: 'videoCapture',
+        name: 'Camera'
+      },
+      {
+        value: 'audioCapture',
+        name: 'Microphone'
+      },
+      {
+        value: 'usb',
+        name: 'USB'
+      },
+      {
+        value: 'bluetooth',
+        name: 'Bluetooth'
+      },
+      {
+        value: 'serial',
+        name: 'Serial Port'
+      },
+      {
+        value: 'udpsend',
+        name: 'Send UDP data'
+      },
+      {
+        value: 'udpbind',
+        name: 'Receive UDP data'
+      },
+      {
+        value: 'tcp',
+        name: 'TCP'
+      },
+      {
+        value: 'mediagallery',
+        name: 'Media Gallery API'
+      }
+    ]
   }];
 
   this.prompt(prompts, function (props) {
+    var hasPerm = function (perm) { return props.permissions.indexOf(perm) > -1; };
     this.appFullName = props.appFullName;
     this.appDescription = props.appDescription;
-    this.appPermissions.serial = props.serialPermission;
-    this.appPermissions.identity = props.identityPermission;
-    this.appPermissions.unlimitedStorage = props.unlimitedStoragePermission;
-    this.appPermissions.usb = props.usbPermission;
-    this.appPermissions.bluetooth = props.bluetoothPermission;
-    this.appPermissions.webview = props.webviewPermission;
-    this.appPermissions.audioCapture = props.audioCapturePermission;
-    this.appPermissions.videoCapture = props.videoCapturePermission;
+
+    this.appPermissions.serial = hasPerm('serial');
+    this.appPermissions.identity = hasPerm('identity');
+    this.appPermissions.unlimitedStorage = hasPerm('unlimitedStorage');
+    this.appPermissions.usb = hasPerm('usb');
+    this.appPermissions.bluetooth = hasPerm('bluetooth');
+    this.appPermissions.webview = hasPerm('webview');
+    this.appPermissions.audioCapture = hasPerm('audioCapture');
+    this.appPermissions.videoCapture = hasPerm('videoCapture');
 
     var connections = [];
 
-    if (props.udpbindPermission) {
+    if (hasPerm('udpbind')) {
       connections.push('udp-bind::8899');
     }
 
-    if (props.udpsendPermission) {
+    if (hasPerm('udpsend')) {
       connections.push('udp-send-to::8899');
     }
 
-    if (props.tcpPermission) {
+    if (hasPerm('tcp')) {
       connections.push('tcp-connect');
     }
 
     // Complex permission objects
-    if (props.mediagalleryPermission)
+    if (hasPerm('mediagallery'))
       this.appPermissions.mediaGalleries = { 'mediaGalleries': ['read', 'allAutoDetected'] };
 
     if (connections.length > 0) {
@@ -180,7 +177,7 @@ ChromeAppGenerator.prototype.buildData = function buildData() {
   var complexPermissions = [];
 
   for (var permission in this.appPermissions) {
-    if (!!this.appPermissions[permission] === false) {
+    if (!this.appPermissions[permission]) {
       continue;
     }
 
