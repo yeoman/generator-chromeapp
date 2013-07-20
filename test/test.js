@@ -44,6 +44,7 @@ describe('Chrome App Generator', function () {
 
     helpers.mockPrompt(this.chromeapp, {
       'name': 'temp',
+      'permissions': []
     });
 
     this.chromeapp.options['skip-install'] = true;
@@ -161,6 +162,7 @@ describe('Chrome App Generator', function () {
 
       helpers.mockPrompt(this.chromeapp, {
         'name': 'temp',
+        'permissions': []
       });
 
       this.chromeapp.options['skip-install'] = true;
@@ -178,7 +180,8 @@ describe('Chrome App Generator', function () {
 
       helpers.mockPrompt(this.chromeapp, {
         appFullName: 'Paul1',
-        appDescription: 'TEST'
+        appDescription: 'TEST',
+        permissions: []
       });
 
       this.chromeapp.options['skip-install'] = true;
@@ -195,7 +198,8 @@ describe('Chrome App Generator', function () {
 
       helpers.mockPrompt(this.chromeapp, {
         appFullName: 'TEST',
-        appDescription: 'PauL is Awesome'
+        appDescription: 'PauL is Awesome',
+        permissions: []
       });
 
       this.chromeapp.options['skip-install'] = true;
@@ -211,7 +215,7 @@ describe('Chrome App Generator', function () {
       ];
 
       helpers.mockPrompt(this.chromeapp, {
-        unlimitedStoragePermission: 'Y'
+        permissions: ['unlimitedStorage']
       });
 
       this.chromeapp.options['skip-install'] = true;
@@ -227,7 +231,7 @@ describe('Chrome App Generator', function () {
       ];
 
       helpers.mockPrompt(this.chromeapp, {
-        identityPermission: 'Y'
+        permissions: ['identity']
       });
 
       this.chromeapp.options['skip-install'] = true;
@@ -243,7 +247,7 @@ describe('Chrome App Generator', function () {
       ];
 
       helpers.mockPrompt(this.chromeapp, {
-        usbPermission: 'Y'
+        permissions: ['usb']
       });
 
       this.chromeapp.options['skip-install'] = true;
@@ -259,7 +263,7 @@ describe('Chrome App Generator', function () {
       ];
 
       helpers.mockPrompt(this.chromeapp, {
-        mediagalleryPermission: 'Y'
+        permissions: ['mediagallery']
       });
 
       this.chromeapp.options['skip-install'] = true;
