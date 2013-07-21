@@ -31,6 +31,9 @@
   "engines": {
     "node": ">=0.8.0"
   },
+  "files": [
+    "app"
+  ],
   "licenses": [
     {
       "type": "BSD"
