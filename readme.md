@@ -11,6 +11,29 @@ Install: `npm install -g generator-chromeapp`
 
 Usage: `yo chromeapp`
 
+## Generators
+
+Available generators:
+
+* [chromeapp](#app) (aka [chromeapp:app](#app))
+* [chromeapp:permission](#permission)
+
+## App
+Sets up a new Chrome app, generating all the boilerplate you need to get started.
+
+Example: 
+```bash
+yo chromeapp
+```
+
+## Permission
+Generates and append a chromeapp permission to manifest.json.
+
+Example: 
+```bash
+yo chromeapp:permmision
+```
+
 ## Options
 
 * `--skip-install`
