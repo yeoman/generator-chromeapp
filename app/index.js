@@ -13,7 +13,10 @@ var ChromeAppGenerator = module.exports = function ChromeAppGenerator(args, opti
     },
     'app': {
       'background': {
-        'scripts': ['scripts/main.js']
+        'scripts': [
+          'scripts/main.js',
+          'scripts/chromereload.js'
+        ]
       }
     }
   });

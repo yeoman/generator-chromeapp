@@ -175,6 +175,22 @@ ChromeappSampleGenerator.prototype.app = function app() {
 ChromeappSampleGenerator.prototype.packages = function packages() {
   this.sourceRoot(path.join(__dirname, '../app/templates'));
 
+  var manifestPath = this.expand('**/manifest.json', {'cwd': process.cwd()});
+  var manifest;
+
+  if (manifestPath.length === 0) {
+    throw 'Not found manifest.json';
+  }
+
+  manifestPath = path.join(process.cwd(), manifestPath[0]);
+  manifest = JSON.parse(this.readFileAsString(manifestPath));
+
+  if (manifest) {
+    manifest.app.background.scripts.push('chromereload.js');
+    this.writeFileFromString(JSON.stringify(manifest, null, 4), manifestPath);
+    this.copy('scripts/chromereload.js', 'app/chromereload.js');
+  }
+
   this.copy('_package.json', 'package.json');
   this.mkdir('app/bower_components');
   this.copy('_bower.json', 'bower.json');
@@ -184,5 +200,5 @@ ChromeappSampleGenerator.prototype.packages = function packages() {
   this.copy('gitattributes', '.gitattributes');
   this.copy('jshintrc', '.jshintrc');
 
-  this.template('Gruntfile.js');
+  this.template('Gruntfile.samples.js', 'Gruntfile.js');
 };
