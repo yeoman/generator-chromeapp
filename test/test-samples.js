@@ -24,15 +24,16 @@ describe('Chrome App Generator', function () {
     }.bind(this));
   });
 
-  describe('#expectedFiles', function() {
+  describe('#app', function() {
     it('should create expected files', function (done) {
       var appname =  'analytics';
       var expected = [
-        'app/bower_components',
-        'bower.json',
         'package.json',
         'Gruntfile.js',
-        'app/manifest.json'
+        'app/manifest.json',
+        'app/background.js',
+        'Gruntfile.js',
+        '.editorconfig',
       ];
 
       this.timeout(0);

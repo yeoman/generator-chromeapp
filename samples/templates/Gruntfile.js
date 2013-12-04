@@ -42,7 +42,7 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('debug', function (opt) {
+    grunt.registerTask('run', function (opt) {
         grunt.task.run([
             'connect:livereload',
             'watch'

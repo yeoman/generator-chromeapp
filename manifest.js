@@ -1,15 +1,19 @@
 /**
- * Manifest for Chrome apps and extension. Please follow for the details.
+ *
+ * Manifest for Chrome apps and extension.
+ * For more details, please follow the link below.
  *
  * Chrome apps: http://developer.chrome.com/apps/declare_permissions.html
  * Chrome extension: http://developer.chrome.com/extensions/declare_permissions.html
  *
  */
 
+var _ = require('lodash');
+
 var Permissions = {
   'adview': {
     availability: 'app',
-    status: 'undocumented'
+    status: 'dev'
   },
   'alarms': {
     availability: 'both'
@@ -75,11 +79,11 @@ var Permissions = {
   },
   'diagnostics': {
     availability: 'app',
-    status: 'undocumented'
+    status: 'dev'
   },
   'dns': {
     availability: 'both',
-    status: 'undocumented'
+    status: 'dev'
   },
   'experimental': {
     availability: 'both'
@@ -108,6 +112,10 @@ var Permissions = {
   'fullscreen': {
     availability: 'app'
   },
+  'gcm': {
+    availability: 'app',
+    status: 'dev'
+  },
   'geolocation': {
     availability: 'both'
   },
@@ -119,10 +127,6 @@ var Permissions = {
   },
   'idle': {
     availability: 'both'
-  },
-  'idltest': {
-    availability: 'extension',
-    status: 'undocumented'
   },
   'infobars': {
     availability: 'both',
@@ -141,7 +145,7 @@ var Permissions = {
   'mediaGalleries': {
     availability: 'app',
     permission: {
-      'mediaGalleries': ["read", "copyTo", "allAutoDetected"]
+      'mediaGalleries': ['read', 'copyTo', 'allAutoDetected']
     }
   },
   'notifications': {
@@ -184,7 +188,10 @@ var Permissions = {
     status: 'dev'
   },
   'socket': {
-    availability: 'app'
+    availability: 'app',
+    permission: {
+      'socket': []
+    }
   },
   'storage': {
     availability: 'both'
@@ -241,7 +248,7 @@ var Permissions = {
   },
   'wallpaper': {
     availability: 'app',
-    status: 'undocumented'
+    status: 'dev'
   },
   'webNavigation': {
     availability: 'extension'
@@ -257,199 +264,60 @@ var Permissions = {
   }
 };
 
-
-var manifest = module.exports = function manifest(generator, options) {
-  this.generator = generator;
-  this._ = generator._;
-  this.chromeVersion = 'chrome30';
-  this.fields = {
+// Constructor of manifest
+var manifest = module.exports = function Manifest(fields) {
+  this.fields = _.merge({
     'name': '__MSG_appName__',
     'description': '__MSG_appDescription__',
     'version': '1',
     'manifest_version': 2,
     'default_locale': 'en',
     'permissions': []
-  };
+  }, fields);
 
-  this.fields = this._.merge(this.fields, options);
   return this;
 };
 
-// Load manifest fileds from file
-manifest.prototype.load = function load(dest) {
-  var path = require('path');
-  var fs = require('fs');
-
-  dest = path.join(process.cwd(), dest);
-  if (fs.existsSync(dest)) {
-    var fields = this.generator.read(dest);
-    if (fields)
-      this.fields = this._.merge(this.fields, JSON.parse(fields));
-  }
-};
-
-// Get a permission list by type and option
-manifest.prototype.getPermissions = function(type, opt) {
-  return this._.pick(Permissions, function(i, key) {
-    return (i.availability === 'both' || i.availability === type) &&
-      (opt.dev ? i.status !== 'undocumented' : i.status === undefined) &&
-      (opt.filter ? (this._.indexOf(this.fields.permissions, key) === -1) : true);
-  }.bind(this));
-};
-
-// Set a permissions with new permission
-manifest.prototype.setPermissions = function(newPerms) {
-  var omitPermissions = ['socket'];
-  this._.each(newPerms, function(newPerm) {
-    if (this._.intersection(omitPermissions, [newPerm]).length !== 0)
-      return;
-
-    var perm = this._.isString(newPerm) ? Permissions[newPerm] : newPerm;
-    if (perm) {
-      this.fields.permissions = this._.union(this.fields.permissions, perm.permission ? perm.permission : newPerm);
-      if (perm.field) {
-        this._.merge(this.fields, perm.field);
-      }
-      if (perm.resource) this._.merge(this.fields, perm.resource);
+// Get a permission list by name, type and option
+manifest.query = function(opt) {
+  return _.pick(Permissions, function(i, key) {
+    if (opt.name) {
+      return (opt.name === key)
+    } else {
+      return (i.availability === 'both' || i.availability === opt.type) &&
+      (opt.devFeatures || i.status !== 'dev')
     }
   }.bind(this));
 };
 
+// Set a new permissions
+manifest.prototype.setPermissions = function(newPerms) {
+  var permissions = [];
+
+  _.each(newPerms, function(newPerm) {
+    // Determine which type of new permission
+    var permDesc = _.isString(newPerm) ? Permissions[newPerm] : _.isObject(newPerm) && newPerm;
+
+    // Add new permission list to merge
+    permissions.push(permDesc && permDesc.permission ? permDesc.permission : newPerm);
+
+    // Merge field and resource
+    if (permDesc) {
+      if (permDesc.field) {
+        _.merge(this.fields, permDesc.field);
+      }
+
+      if (permDesc.resource) {
+        _.merge(this.fields, permDesc.resource);
+      }
+    }
+  }.bind(this));
+
+  // Merge a new permissions
+  this.fields.permissions = _.union(this.fields.permissions, permissions);
+}
+
 // Return stringified manifest
 manifest.prototype.stringify = function() {
   return JSON.stringify(this.fields, null, '\t').replace(/\n/g, '\n  ');
-};
-
-manifest.prototype.getMorePermissionPrompts = function(opt) {
-  var prompt = [];
-
-  // Set more prompt if user wanna input custom match patterns
-  if (this._.indexOf(opt, 'customPattern') !== -1) {
-    prompt.push({
-      type: 'input',
-      name: 'customPattern',
-      message: 'Input a match patterns with comma-separated',
-      filter: function(val) {
-        return val.length > 0 ? {'permission': val.replace(/\s+/, '').split(',')} : undefined;
-      }
-    });
-  }
-
-  // Set more prompt if socket permission has selected
-  if (this._.indexOf(opt, 'socket') !== -1) {
-    prompt.push({
-      type: 'input',
-      name: 'socketPermission',
-      message: 'Input a socket rules with comma-separated',
-      default: 'tcp-listen:*:*, tcp-connect:*:*',
-      filter: function(val) {
-        return {'permission': {'socket': val.replace(/\s+/, '').split(',')}};
-      }
-    });
-  }
-
-  return prompt;
-}
-
-manifest.prototype.getHostPermissionPrompts = function(type) {
-  var hostPermission = [{
-    type: 'checkbox',
-    name: 'hostPermission',
-    message: 'Select match patterns to add',
-    choices: [{
-      name: 'HTTP scheme. `http://*/*, https://*/*`',
-      value: 'httpScheme',
-    }, {
-      name: 'All of permitted schem. `<all_urls>`',
-      value: 'allURLs',
-    }, {
-      name: 'HTTP scheme and is on the host 127.0.0.1',
-      value: 'localhost'
-    }, {
-      name: 'Input a custom match patterns',
-      value: 'customPattern'
-    }]
-  }];
-
-  if (type === 'extension') {
-    hostPermission.push({
-      name: 'Matches any URL pointing to an extension. `chrome-extension://*/*`',
-      value: 'extensionScheme'
-    });
-  }
-
-  return hostPermission;
-};
-
-manifest.prototype.getPermissionPrompts = function(type, opt) {
-  return {
-    type: 'checkbox',
-    name: 'permissions',
-    message: 'Select a permissions for the ' + type,
-    paginated : true,
-    choices: this._.keys(this.getPermissions(type, opt))
-  };
-};
-
-// Asks for permissions
-manifest.prototype.askForPermissions = function(type, opt) {
-  var cb = this.generator.async();
-  var prompt = this.generator.prompt;
-  var manifest = this;
-  var _ = this._;
-  var morePermission = [];
-  var devFeaturesPrompt = {
-    name: 'devFeatures',
-    type: 'confirm',
-    message: 'Would you like to use the dev features?',
-    default: false
-  };
-
-  prompt(devFeaturesPrompt, function(answers) {
-
-    opt.devFeatures = answers.devFeatures;
-
-    prompt(manifest.getPermissionPrompts(type, opt), function (answers) {
-      // Update a permissions to manifest fields
-      manifest.setPermissions(answers.permissions);
-
-      if (_.indexOf(answers.permissions, 'socket') !== -1)
-        morePermission.push('socket');
-
-      prompt(manifest.getHostPermissionPrompts(type), function (answers) {
-        var host = {permissions: []};
-        var schemes = answers.hostPermission;
-
-        function hasScheme(scheme) {return schemes.indexOf(scheme) !== -1;};
-
-        // Push each match patterns to permissions of manifest
-        if (hasScheme('httpScheme')) {
-          host.permissions.push('http://*/*');
-          host.permissions.push('https://*/*');
-        }
-
-        if (hasScheme('allURLs'))
-          host.permissions.push('<all_urls>');
-
-        if (hasScheme('localhost'))
-          host.permissions.push('http://127.0.0.1/*');
-
-        if (hasScheme('extensionScheme'))
-          host.permissions.push('chrome-extension://*/*');
-
-        if (hasScheme('customPattern'))
-          morePermission.push('customPattern');
-
-        // Update a host permissions to manifest fields
-        manifest.setPermissions(host);
-
-        // Ask host permissions and more
-        prompt(manifest.getMorePermissionPrompts(morePermission), function (answers) {
-          manifest.setPermissions(answers.socketPermission);
-          manifest.setPermissions(answers.customPattern);
-          cb();
-        });
-      });
-    });
-  });
 };

@@ -6,7 +6,7 @@
     "yeoman-generator",
     "scaffold",
     "chrome",
-    "app"
+    "apps"
   ],
   "homepage": "https://github.com/yeoman/generator-chromeapp",
   "bugs": "https://github.com/yeoman/generator-chromeapp/issues",
@@ -21,7 +21,8 @@
   },
   "dependencies": {
     "yeoman-generator": "~0.13.4",
-    "rimraf": "~2.2.0"
+    "rimraf": "~2.2.0",
+    "lodash": "~2.3.0"
   },
   "peerDependencies": {
     "yo": ">=1.0.0-rc.1.1",

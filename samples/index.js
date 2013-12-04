@@ -1,4 +1,5 @@
 'use strict';
+
 var util = require('util');
 var yeoman = require('yeoman-generator');
 var https = require('https');
@@ -6,19 +7,10 @@ var path = require('path');
 var fs = require('fs');
 var rimraf = require('rimraf');
 
-// clone function, tweak the function from generator:base:action:remote
+// clone function, tweak the from action.remote
 function clone(username, repo, branch, cb) {
-  if (!cb) {
-    cb = branch;
-    branch = 'master';
-  }
-
   var self = this;
-  var cache = path.join(this.cacheRoot(), username, repo, branch);
-  var git = {
-    clone: ['git clone', ['https://github.com', username, repo].join('/'), '-b', branch, cache].join(' '),
-    pull: ['git pull origin ' + branch]
-  };
+  var cache, git;
 
   function shellExec(command, cb) {
     return cb(self.shell.exec(command, { silent: false }).code !== 0) ?
@@ -30,6 +22,17 @@ function clone(username, repo, branch, cb) {
         return (filepath.indexOf('.') === 0) ? false :
         fs.statSync(path.join(cwd, filepath)).isDirectory()
       });
+  };
+
+  if (!cb) {
+    cb = branch;
+    branch = 'master';
+  }
+
+  cache = path.join(this.cacheRoot(), username, repo, branch);
+  git = {
+    clone: ['git clone', ['https://github.com', username, repo].join('/'), '-b', branch, cache].join(' '),
+    pull: ['git pull origin ' + branch]
   };
 
   fs.stat(cache, function (err) {
@@ -55,8 +58,6 @@ function clone(username, repo, branch, cb) {
     var files = expandDirs(cache);
     var clone = {};
 
-    clone.cachePath = cache;
-
     clone.directory = function directory(source, destination) {
       var root = self.sourceRoot();
       self.sourceRoot(cache);
@@ -64,53 +65,8 @@ function clone(username, repo, branch, cb) {
       self.sourceRoot(root);
     };
 
-    cb(err, clone, files, cache);
+    cb(err, clone, files);
   }
-
-  return this;
-};
-
-// Copy target sample app from cache. If it is already exist?
-// Show the prompt to overwrite or not
-function copySampleapp(done) {
-  var log = this.log;
-  var appname = this.appname;
-  var filepath = path.join(this.destinationRoot() + 'app');
-
-  if (!fs.existsSync(filepath)) {
-    return done(true);
-  }
-
-  // Check the overwrite option if `app` is already exist
-  var config = [{
-    type: 'expand',
-    message: 'Overwrite `app`' + '?',
-    choices: [{
-      key: 'y',
-      name: 'Overwrite',
-      value: true
-    }, {
-      key: 'n',
-      name: 'Do not overwrite',
-      value: false
-    }],
-    name: 'overwrite'
-  }];
-
-  this.prompt(config, function(answers) {
-    if (!answers.overwrite) {
-      done(false);
-    }
-
-    rimraf(filepath, function (err) {
-      log.force('Overwrite with ' + appname);
-      if (err) {
-        return done(false);
-      }
-
-      done(true);
-    });
-  });
 
   return this;
 };
@@ -118,28 +74,19 @@ function copySampleapp(done) {
 var ChromeappSampleGenerator = module.exports = function ChromeappSampleGenerator(args, options, config) {
   yeoman.generators.Base.apply(this, arguments);
 
-  // Extend util functions
+  // extend generator with clone
   this._.extend(yeoman.generators.Base.prototype, {
-    clone: clone,
-    copySampleapp: copySampleapp
+    clone: clone
   });
-
-  // setup the test-framework property, Gruntfile template will need this
-  this.testFramework = options['test-framework'] || 'mocha';
-
-  // for hooks to resolve on mocha by default
-  if (!options['test-framework']) {
-    options['test-framework'] = 'mocha';
-  }
-
-  // resolved to mocha by default (could be switched to jasmine for instance)
-  this.hookFor('test-framework', { as: 'app' });
 
   this.on('end', function () {
     this.installDependencies({ skipInstall: options['skip-install'] });
   });
 
   this.pkg = JSON.parse(this.readFileAsString(path.join(__dirname, '../package.json')));
+
+  // overwrite flag
+  this.overwrite = true;
 };
 
 util.inherits(ChromeappSampleGenerator, yeoman.generators.Base);
@@ -148,57 +95,95 @@ ChromeappSampleGenerator.prototype.app = function app() {
   var cb = this.async();
   var self = this;
 
+  self.log('Checking for google chrome-app-sample repository on github');
+
   // clone or pull from https://github.com/GoogleChrome/chrome-app-samples.git
-  this.clone('GoogleChrome', 'chrome-app-samples.git', 'master', function(err, clone, files, cache) {
-    var prompt = [{
+  this.clone('GoogleChrome', 'chrome-app-samples.git', 'master', function(err, clone, files) {
+    var prompt = {
       type: 'list',
       name: 'appname',
       message: 'What sample would you like to use?',
       choices: files
-    }];
-
-    // Save sample name and copy sample from cached chromeapp samples
-    function done(copy) {
-      if (copy) {
-        clone.directory(self.appname, 'app');
-      }
-      cb();
     };
 
     self.prompt(prompt, function(answers) {
+      var filepath = path.join(self.destinationRoot() + 'app');
+
       self.appname = answers.appname;
-      self.copySampleapp(done);
+
+      function done(copy) {
+        copy && clone.directory(self.appname, 'app');
+        cb();
+      };
+
+      // checking for collision of app
+      if (!fs.existsSync(filepath)) {
+        return done(true);
+      }
+
+      var prompt = {
+        name: 'overwrite',
+        type: 'confirm',
+        message: 'Chrome App is already exist. Overwrite the `App`' + '?',
+        default: false
+      };
+
+      self.prompt(prompt, function(answers) {
+        // save overwrite flag to after process
+        self.overwrite = answers.overwrite;
+
+        // remove previous app if user want to remove it
+        if (answers.overwrite) {
+          rimraf(filepath, function (err) {
+            self.log.force('Overwrite by ' + self.appname);
+            done(true);
+          });
+        } else {
+          done(false);
+        }
+      });
     });
-  });
+  })
 };
 
 ChromeappSampleGenerator.prototype.packages = function packages() {
-  this.sourceRoot(path.join(__dirname, '../app/templates'));
-
-  var manifestPath = this.expand('**/manifest.json', {'cwd': process.cwd()});
+  var manifestPath;
   var manifest;
 
+  // aborting
+  if (this.overwrite === false) {
+    this.options['skip-install'] = true;
+    return;
+  }
+
+  // find manifest.json in sample app
+  manifestPath = this.expand('**/manifest.json', {'cwd': process.cwd()});
+
   if (manifestPath.length === 0) {
-    throw 'Not found manifest.json';
+    throw 'manifest.json not found';
   }
 
   manifestPath = path.join(process.cwd(), manifestPath[0]);
   manifest = JSON.parse(this.readFileAsString(manifestPath));
 
-  if (manifest) {
-    manifest.app.background.scripts.push('chromereload.js');
-    this.writeFileFromString(JSON.stringify(manifest, null, 4), manifestPath);
-    this.copy('scripts/chromereload.js', 'app/chromereload.js');
+  if (!manifest) {
+    throw 'manifest.json has a problem';
   }
 
   this.copy('_package.json', 'package.json');
-  this.mkdir('app/bower_components');
-  this.copy('_bower.json', 'bower.json');
-  this.copy('bowerrc', '.bowerrc');
+  this.template('Gruntfile.js', 'Gruntfile.js');
+
+  // getting templates from chromeapp:app
+  this.sourceRoot(path.join(__dirname, '../app/templates'));
+
   this.copy('editorconfig', '.editorconfig');
   this.copy('gitignore', '.gitignore');
   this.copy('gitattributes', '.gitattributes');
-  this.copy('jshintrc', '.jshintrc');
 
-  this.template('Gruntfile.samples.js', 'Gruntfile.js');
+  // add reload script into manifest.json in sample app
+  manifest.app.background.scripts.push('chromereload.js');
+  this.writeFileFromString(JSON.stringify(manifest, null, 4), manifestPath);
+  this.copy('scripts/chromereload.js', 'app/chromereload.js');
+
+
 };
