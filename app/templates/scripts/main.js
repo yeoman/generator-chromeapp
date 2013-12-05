@@ -1,13 +1,17 @@
 'use strict';
-/**
- * Listens for the app launching then creates the window
- *
- * @see http://developer.chrome.com/trunk/apps/experimental.app.html
- * @see http://developer.chrome.com/trunk/apps/app.window.html
- */
+
+// Listens for the app launching then creates the window
 chrome.app.runtime.onLaunched.addListener(function() {
+    var width = 500;
+    var height = 300;
+
     chrome.app.window.create('index.html', {
-        width: 500,
-        height: 309
+        id: 'main',
+        bounds: {
+            width: width,
+            height: height,
+            left: Math.round((screen.availWidth - width) / 2),
+            top: Math.round((screen.availHeight - height)/2)
+        }
     });
 });
