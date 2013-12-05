@@ -4,7 +4,7 @@ var assert = require('assert');
 var path = require('path');
 var helpers = require('yeoman-generator').test;
 
-describe('Chrome App Generator', function () {
+describe('#app', function () {
   beforeEach(function (done) {
     helpers.testDirectory(path.join(__dirname, 'temp'), function (err) {
       if (err) {
@@ -12,10 +12,15 @@ describe('Chrome App Generator', function () {
       }
 
       this.chromeapp = helpers.createGenerator('chromeapp:app', [
-        '../../app', [
-          helpers.createDummyGenerator(),
-          'mocha:app'
-        ]
+          '../../app',
+          [
+            helpers.createDummyGenerator(),
+            'chromeapp:permission'
+          ],
+          [
+            helpers.createDummyGenerator(),
+            'mocha:app'
+          ]
       ]);
 
       this.chromeapp.options['skip-install'] = true;
@@ -24,7 +29,7 @@ describe('Chrome App Generator', function () {
     }.bind(this));
   });
 
-  describe('#expectedFiles', function() {
+  describe('#app', function() {
     it('should create expected files', function (done) {
       var expected = [
         'app/bower_components',
@@ -42,9 +47,9 @@ describe('Chrome App Generator', function () {
 
       helpers.mockPrompt(this.chromeapp, {
         'name': 'temp',
-        'permissions': [],
-        'hostPermission': [],
-        'socketPermission':[]
+        permissions: [],
+        matchPatterns: [],
+        socketPermission:[]
       });
 
       this.chromeapp.options['skip-install'] = true;
@@ -63,9 +68,9 @@ describe('Chrome App Generator', function () {
       helpers.mockPrompt(this.chromeapp, {
         'appName': 'Paul',
         'appDescription': 'PauL is Awesome',
-        'permissions': [],
-        'hostPermission': [],
-        'socketPermission':[]
+        permissions: [],
+        matchPatterns: [],
+        socketPermission:[]
       });
 
       this.chromeapp.options['skip-install'] = true;

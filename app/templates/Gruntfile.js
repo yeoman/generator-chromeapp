@@ -234,7 +234,6 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('debug', function (opt) {
-        // add optional task
         if (opt && opt === 'jshint') {
             var watch = grunt.config('watch');
             watch.livereload.tasks.push('jshint');

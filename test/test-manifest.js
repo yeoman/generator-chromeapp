@@ -8,7 +8,7 @@ var _ = require('lodash');
 var Manifest = require('../manifest');
 var cloneManifest = {};
 
-describe('Chrome app permission generator test', function () {
+describe('#permission generator', function () {
   beforeEach(function (done) {
     helpers.testDirectory(path.join(__dirname, 'temp'), function (err) {
       if (err) {

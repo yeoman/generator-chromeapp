@@ -24,7 +24,7 @@ describe('Chrome App Generator', function () {
     }.bind(this));
   });
 
-  describe('#app', function() {
+  describe('#samples', function() {
     it('should create expected files', function (done) {
       var appname =  'analytics';
       var expected = [

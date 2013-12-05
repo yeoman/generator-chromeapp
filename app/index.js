@@ -5,27 +5,9 @@ var Manifest = require('../manifest');
 
 var ChromeAppGenerator = module.exports = function ChromeAppGenerator(args, options, config) {
   yeoman.generators.Base.apply(this, arguments);
+
+  // set source root path to templates
   this.sourceRoot(path.join(__dirname, 'templates'));
-
-  // setup the test-framework property, Gruntfile template will need this
-  this.testFramework = options['test-framework'] || 'mocha';
-
-  // for hooks to resolve on mocha by default
-  if (!options['test-framework']) {
-    options['test-framework'] = 'mocha';
-  }
-
-  // resolved to mocha by default (could be switched to jasmine for instance)
-  this.hookFor('test-framework', { as: 'app' });
-
-  // add more permissions
-  this.hookFor('chromeapp:permission', { args: args });
-
-  this.on('end', function () {
-    this.installDependencies({ skipInstall: options['skip-install'] });
-  });
-
-  this.pkg = JSON.parse(this.readFileAsString(path.join(__dirname, '../package.json')));
 
   // create a default manifest
   this.manifest = new Manifest({
@@ -42,6 +24,26 @@ var ChromeAppGenerator = module.exports = function ChromeAppGenerator(args, opti
       }
     }
   });
+
+  // setup the test-framework property, Gruntfile template will need this
+  this.testFramework = options['test-framework'] || 'mocha';
+
+  // for hooks to resolve on mocha by default
+  if (!options['test-framework']) {
+    options['test-framework'] = 'mocha';
+  }
+
+  // resolved to mocha by default (could be switched to jasmine for instance)
+  this.hookFor('test-framework', { as: 'app' });
+
+  // add more permissions
+  this.hookFor('chromeapp:permission', { as: 'subgen' });
+
+  this.on('end', function () {
+    this.installDependencies({ skipInstall: options['skip-install'] });
+  });
+
+  this.pkg = JSON.parse(this.readFileAsString(path.join(__dirname, '../package.json')));
 };
 
 util.inherits(ChromeAppGenerator, yeoman.generators.Base);
@@ -51,11 +53,11 @@ ChromeAppGenerator.prototype.askFor = function askFor(argument) {
   var prompts = [{
     name: 'appName',
     message: 'What would you like to call this application?',
-    default: 'myChromeApp'
+    default:  (this.appname) ? this.appname : 'myChromeApp'
   }, {
     name: 'appDescription',
     message: 'How would you like to describe this application?',
-    default: 'My Chrome app'
+    default: 'My Chrome App'
   }];
 
   this.prompt(prompts, function(answers) {
