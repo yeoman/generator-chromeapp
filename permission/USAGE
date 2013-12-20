@@ -1,0 +1,8 @@
+Description:
+    Create a manifest.json for chrome apps.
+
+Example:
+    yo chromeapp:permission
+
+    This will create:
+        manifest.json: Manifest file for chrome apps.
