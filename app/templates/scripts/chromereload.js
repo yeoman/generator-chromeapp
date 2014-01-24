@@ -1,7 +1,7 @@
 'use strict';
 
 // Reload client for Chrome Apps & Extensions.
-// The relaod client has a compatibility with livereload.
+// The reload client has a compatibility with livereload.
 // WARNING: only supports reload command.
 
 var LIVERELOAD_HOST = 'localhost:';
