@@ -10,7 +10,7 @@
   ],
   "homepage": "https://github.com/yeoman/generator-chromeapp",
   "bugs": "https://github.com/yeoman/generator-chromeapp/issues",
-  "author": "Chrome Developer Relations",
+  "author": "The Yeoman Team",
   "main": "app/index.js",
   "repository": {
     "type": "git",
