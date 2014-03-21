@@ -27,6 +27,8 @@ var ChromeAppGenerator = module.exports = function ChromeAppGenerator(args, opti
 
   // setup the test-framework property, Gruntfile template will need this
   this.testFramework = options['test-framework'] || 'mocha';
+  this.coffee = options.coffee;
+  this.compass = options.compass;
 
   // for hooks to resolve on mocha by default
   if (!options['test-framework']) {
@@ -68,22 +70,43 @@ ChromeAppGenerator.prototype.askFor = function askFor(argument) {
   }.bind(this));
 };
 
-ChromeAppGenerator.prototype.packages = function packages() {
-  this.copy('_package.json', 'package.json');
-  this.mkdir('app/bower_components');
-  this.copy('_bower.json', 'bower.json');
-  this.copy('bowerrc', '.bowerrc');
-  this.copy('editorconfig', '.editorconfig');
-  this.copy('gitignore', '.gitignore');
-  this.copy('gitattributes', '.gitattributes');
-  this.copy('jshintrc', '.jshintrc');
+ChromeAppGenerator.prototype.gruntfile = function gruntfile() {
   this.template('Gruntfile.js');
 };
 
+ChromeAppGenerator.prototype.packageJSON = function packageJSON() {
+  this.template('_package.json', 'package.json');
+};
+
+ChromeAppGenerator.prototype.git = function git() {
+  this.copy('gitignore', '.gitignore');
+  this.copy('gitattributes', '.gitattributes');
+};
+
+ChromeAppGenerator.prototype.bower = function bower() {
+  this.copy('bowerrc', '.bowerrc');
+  this.copy('_bower.json', 'bower.json');
+};
+
+ChromeAppGenerator.prototype.jshint = function jshint() {
+  this.copy('jshintrc', '.jshintrc');
+};
+
+ChromeAppGenerator.prototype.editorConfig = function editorConfig() {
+  this.copy('editorconfig', '.editorconfig');
+};
+
+ChromeAppGenerator.prototype.mainStylesheet = function mainStylesheet() {
+  var css = 'styles/main.' + (this.compass ? 's' : '') + 'css';
+  this.copy(css, 'app/' + css);
+};
+
 ChromeAppGenerator.prototype.app = function app() {
+  this.mkdir('app');
+  this.mkdir('app/bower_components');
+  this.mkdir('app/styles');
   this.directory('images', 'app/images');
-  this.directory('scripts', 'app/scripts');
-  this.directory('styles', 'app/styles');
+  this.directory(this.coffee ? 'coffees' : 'scripts', 'app/scripts');
   this.template('index.html', 'app/index.html', this);
   this.template('_locales/en/messages.json', 'app/_locales/en/messages.json', this);
   this.write('app/manifest.json', this.manifest.stringify());
