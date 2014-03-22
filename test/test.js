@@ -79,5 +79,28 @@ describe('#app', function () {
         done();
       });
     });
+
+    it('should create coffee files', function (done) {
+      var expected = [
+        'app/scripts/main.coffee',
+        'app/scripts/index.coffee',
+        'app/scripts/chromereload.coffee',
+      ];
+
+      helpers.mockPrompt(this.chromeapp, {
+        'appName': 'Jimmy',
+        'appDescription': 'Jimmy is also Awesome',
+        permissions: [],
+        matchPatterns: [],
+        socketPermission:[]
+      });
+
+      this.chromeapp.options['skip-install'] = true;
+      this.chromeapp.coffee = true;
+      this.chromeapp.run({}, function () {
+        helpers.assertFiles(expected);
+        done();
+      });
+    });
   });
 });
