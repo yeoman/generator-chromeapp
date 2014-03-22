@@ -30,20 +30,24 @@ var ChromeAppGenerator = module.exports = function ChromeAppGenerator(args, opti
   this.coffee = options.coffee;
   this.compass = options.compass;
 
-  // for hooks to resolve on mocha by default
-  if (!options['test-framework']) {
-    options['test-framework'] = 'mocha';
-  }
-
-  // resolved to mocha by default (could be switched to jasmine for instance)
-  this.hookFor('test-framework', { as: 'app' });
-
   // add more permissions
   this.hookFor('chromeapp:permission', { as: 'subgen' });
 
-  this.on('end', function () {
-    this.installDependencies({ skipInstall: options['skip-install'] });
+  // for hooks to resolve on mocha by default
+  options['test-framework'] = this.testFramework;
+
+  // resolved to mocha by default (could be switched to jasmine for instance)
+  this.hookFor('test-framework', {
+    as: 'app',
+    options: {
+      options: {
+        'skip-install': options['skip-install-message'],
+        'skip-message': options['skip-install']
+      }
+    }
   });
+
+  this.options = options;
 
   this.pkg = JSON.parse(this.readFileAsString(path.join(__dirname, '../package.json')));
 };
@@ -111,3 +115,16 @@ ChromeAppGenerator.prototype.app = function app() {
   this.template('_locales/en/messages.json', 'app/_locales/en/messages.json', this);
   this.write('app/manifest.json', this.manifest.stringify());
 };
+
+ChromeAppGenerator.prototype.install = function () {
+  if (this.options['skip-install']) {
+    return;
+  }
+
+  var done = this.async();
+  this.installDependencies({
+    skipMessage: this.options['skip-install-message'],
+    skipInstall: this.options['skip-install'],
+    callback: done
+  });
+}
