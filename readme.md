@@ -1,4 +1,4 @@
-# Chrome App generator [![Build Status](https://secure.travis-ci.org/yeoman/generator-chromeapp.png?branch=master)](http://travis-ci.org/yeoman/generator-chromeapp)
+# Chrome App generator [![Build Status](https://secure.travis-ci.org/yeoman/generator-chromeapp.svg?branch=master)](http://travis-ci.org/yeoman/generator-chromeapp)
 
 Maintainer: [Jimmy Moon](https://github.com/ragingwind)
 
