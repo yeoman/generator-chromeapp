@@ -1,42 +1,49 @@
-/*global describe, it */
+/*global describe, beforeEach, it */
 'use strict';
 
-var assert = require('assert');
 var path = require('path');
 var helpers = require('yeoman-generator').test;
-var _ = require('lodash');
+var assert = require('assert');
+var _ = require('underscore');
 var Manifest = require('../manifest');
-var cloneManifest = {};
 
-describe('#permission generator', function () {
+describe('Chromeapp generator', function () {
+  if ('the generator can be required without throwing', function () {
+    this.app = require('../app');
+  });
+
+  var options = {
+    'skip-install': true
+  };
+
+  var prompts = {
+    permissions: [],
+    matchPatterns: [],
+    socketPermission:[]
+  };
+
+  var runGen;
+
   beforeEach(function (done) {
     helpers.testDirectory(path.join(__dirname, 'temp'), function (err) {
       if (err) {
         return done(err);
       }
 
-      this.generator = helpers.createGenerator('chromeapp:permission', [
-        '../../permission'
-      ]);
-      this.generator.options['skip-install'] = true;
-
+      runGen = helpers
+        .run(path.join(__dirname, '../permission'))
+        .withGenerators([
+          [helpers.createDummyGenerator(), 'mocha:app']
+        ]);
       done();
-    }.bind(this));
+    });
   });
 
   it('should have an empty permissions array', function (done) {
-    var expected = [
-      ['app/manifest.json', /"permissions": \[\]/],
-    ];
-
-    helpers.mockPrompt(this.generator, {
-      permissions: [],
-      matchPatterns: [],
-      socketPermission:[]
-    });
-
-    this.generator.run({}, function () {
-      helpers.assertFiles(expected);
+    runGen.withOptions(options).withPrompt(prompts).on('end', function () {
+      assert.fileContent([
+        ['app/manifest.json', /"permissions": \[\]/],
+      ]);
       done();
     });
   });
@@ -46,7 +53,8 @@ describe('#permission generator', function () {
       type: 'app',
       devFeatures: true
     });
-    var expected = [
+
+    var expectedContents = [
       // host permmision, all_urls, http/s schceme,
       ['app/manifest.json', /\s+"<all_urls>"/],
       ['app/manifest.json', /\s+"http:\/\/\*\/\*",\s+"https:\/\/\*\/\*"/],
@@ -67,20 +75,18 @@ describe('#permission generator', function () {
         return;
       }
 
-      expected.push(['app/manifest.json', new RegExp(permName)]);
+      expectedContents.push(['app/manifest.json', new RegExp(permName)]);
     });
 
-    helpers.mockPrompt(this.generator, {
-      permissions: _.keys(permissions),
-      matchPatterns: ['allURLs', 'httpScheme', 'localhost', 'extensionScheme'],
-      socketPermission: ['tcp-connect:*:*', 'tcp-listen:*:8080']
-    });
-
-    this.generator.run({}, function () {
-      // clone current manifest for next testing
-      cloneManifest = _.clone(this.generator.manifest);
-      helpers.assertFiles(expected);
+    runGen.withOptions(options).withPrompt(
+      _.extend(prompts, {
+        permissions: _.keys(permissions),
+        matchPatterns: ['allURLs', 'httpScheme', 'localhost', 'extensionScheme'],
+        socketPermission: ['tcp-connect:*:*', 'tcp-listen:*:8080']
+      })
+    ).on('end', function () {
+      assert.fileContent(expectedContents);
       done();
-    }.bind(this));
+    });
   });
 });

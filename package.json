@@ -20,16 +20,17 @@
     "test": "mocha --reporter spec"
   },
   "dependencies": {
-    "yeoman-generator": "~0.16.0",
+    "yeoman-generator": "^0.17.0",
     "rimraf": "~2.2.0",
     "lodash": "~2.3.0"
   },
   "peerDependencies": {
-    "yo": ">=1.0.0",
+    "yo": ">=1.2.0",
     "generator-mocha": ">=0.1.1"
   },
   "devDependencies": {
-    "mocha": "*"
+    "mocha": "*",
+    "underscore": "^1.6.0"
   },
   "engines": {
     "node": ">=0.10.0",
