@@ -28,6 +28,8 @@ module.exports = yeoman.generators.Base.extend({
       }
     });
 
+    this.hookFor('chromeapp:permission', { as: 'subgen' });
+
     this.option('test-framework', {
       desc: 'Test framework to be invoked',
       type: String,
@@ -116,9 +118,6 @@ module.exports = yeoman.generators.Base.extend({
 
   install: function () {
     this.on('end', function () {
-      // invode permission sub-generator
-      this.invoke('chromeapp:permission', {});
-
       // invoke test-framework generator
       this.invoke(this.options['test-framework']+':app', {
         options: {
