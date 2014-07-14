@@ -390,7 +390,10 @@ module.exports = function (grunt) {
         compress: {
             dist: {
                 options: {
-                    archive: 'package/<%= appname %>-<%%= config.manifest.version %>.zip'
+                    archive: function() {
+                        var manifest = grunt.file.readJSON('app/manifest.json');
+                        return 'package/<%= appname %>-' + manifest.version + '.zip';
+                    }
                 },
                 files: [{
                     expand: true,
