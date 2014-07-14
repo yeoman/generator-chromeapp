@@ -19,7 +19,6 @@ module.exports = function (grunt) {
     var config = {
         app: 'app',
         dist: 'dist',
-        manifest: grunt.file.readJSON('app/manifest.json'),
         tasks: grunt.cli.tasks
     };
 
@@ -104,6 +103,7 @@ module.exports = function (grunt) {
             },
             test: {
                 options: {
+                    open: false,
                     base: [
                         'test',
                         '<%%= config.app %>'
