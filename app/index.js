@@ -28,9 +28,6 @@ module.exports = yeoman.generators.Base.extend({
       }
     });
 
-    // add more permissions
-    this.hookFor('chromeapp:permission', { as: 'subgen' });
-
     this.option('test-framework', {
       desc: 'Test framework to be invoked',
       type: String,
@@ -51,25 +48,8 @@ module.exports = yeoman.generators.Base.extend({
       defaults: false
     });
     this.compass = this.options.compass;
-    
+
     this.pkg = require('../package.json');
-
-    this.on('end', function () {
-      this.invoke(this.options['test-framework']+':app', {
-        options: {
-          'skip-message': this.options['skip-install-message'],
-          'skip-install': this.options['skip-install'],
-          'coffee': this.options.coffee
-        }
-      });
-
-      if (!this.options['skip-install']) {
-        this.installDependencies({
-          skipMessage: this.options['skip-install-message'],
-          skipInstall: this.options['skip-install']
-        });
-      }
-    });
   },
 
   askFor: function () {
@@ -135,15 +115,26 @@ module.exports = yeoman.generators.Base.extend({
   },
 
   install: function () {
-    if (this.options['skip-install']) {
-      return;
-    }
+    this.on('end', function () {
+      // invode permission sub-generator
+      this.invoke('chromeapp:permission', {});
 
-    var done = this.async();
-    this.installDependencies({
-      skipMessage: this.options['skip-install-message'],
-      skipInstall: this.options['skip-install'],
-      callback: done
+      // invoke test-framework generator
+      this.invoke(this.options['test-framework']+':app', {
+        options: {
+          'skip-message': this.options['skip-install-message'],
+          'skip-install': this.options['skip-install'],
+          'coffee': this.options.coffee
+        }
+      });
+
+      // invoke installer
+      if (!this.options['skip-install']) {
+        this.installDependencies({
+          skipMessage: this.options['skip-install-message'],
+          skipInstall: this.options['skip-install']
+        });
+      }
     });
   }
 });
