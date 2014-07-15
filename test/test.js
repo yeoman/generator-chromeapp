@@ -43,7 +43,6 @@ describe('Chromeapp generator', function () {
     var expected = [
       'app/bower_components',
       'Gruntfile.js',
-      'app/manifest.json',
       'app/_locales/en/messages.json',
       'app/images/icon-128.png',
       'app/images/icon-16.png',

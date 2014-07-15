@@ -28,7 +28,6 @@ module.exports = yeoman.generators.Base.extend({
       }
     });
 
-    this.hookFor('chromeapp:permission', { as: 'subgen' });
 
     this.option('test-framework', {
       desc: 'Test framework to be invoked',
@@ -113,7 +112,12 @@ module.exports = yeoman.generators.Base.extend({
     this.directory(this.coffee ? 'coffees' : 'scripts', 'app/scripts');
     this.template('index.html', 'app/index.html', this);
     this.template('_locales/en/messages.json', 'app/_locales/en/messages.json', this);
-    this.write('app/manifest.json', this.manifest.stringify());
+  },
+  
+  permission: function() {
+    this.invoke('chromeapp:permission', { 
+      options: { manifest: this.manifest }
+    });
   },
 
   install: function () {
