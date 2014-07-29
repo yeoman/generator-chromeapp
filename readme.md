@@ -70,7 +70,7 @@ Support two preview mode. LiveReload/run/debug your Chrome App on Chrome browser
 
 * `grunt debug:server` - Run you Chrome App on Chrome browser like 'serve' task of webapp.
 
-![](http://recordit.co/8wefRz0m0I.gif)
+![](http://i.imgur.com/GxVDqVp.gif)
 
 ## Options
 
