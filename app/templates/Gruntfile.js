@@ -274,6 +274,7 @@ module.exports = function (grunt) {
         htmlmin: {
             dist: {
                 options: {
+                    customAttrAssign: [/\?=/],
                     collapseBooleanAttributes: true,
                     collapseWhitespace: true,
                     removeAttributeQuotes: true,
