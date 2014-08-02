@@ -38,7 +38,7 @@ describe('Chromeapp:sample Generator', function () {
       done();
     });
   });
-  
+
   it('should create expected files', function (done) {
     var expected = [
       'package.json',
@@ -54,11 +54,15 @@ describe('Chromeapp:sample Generator', function () {
       'overwrite': true
     };
 
-    this.timeout(0);
+    this.timeout(10000);
 
     runGen.withOptions(options).withPrompt(prompts).on('end', function () {
-      assert.file(expected);
-      done();
+      try {
+        assert.file(expected);
+        done();
+      } catch (e) {
+        done(e);
+      }
     });
   });
 });
