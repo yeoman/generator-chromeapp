@@ -114,8 +114,8 @@ module.exports = yeoman.generators.Base.extend({
     this.template('_locales/en/messages.json', 'app/_locales/en/messages.json', this);
   },
   
-  permission: function() {
-    this.invoke('chromeapp:permission', { 
+  permission: function(done) {
+    this.composeWith('chromeapp:permission', { 
       options: { manifest: this.manifest }
     });
   },
