@@ -6,13 +6,14 @@ var path = require('path');
 var fs = require('fs');
 var _ = require('lodash');
 var manifest = require('../manifest');
+var chalk = require('chalk');
 
 module.exports = yeoman.generators.Base.extend({
   constructor: function () {
     yeoman.generators.Base.apply(this, arguments);
 
     var dest = path.join(process.cwd(), '/app/manifest.json');
-    
+
     // load the manifest.json if already exist
     if (this.options.manifest) {
       this.manifest = this.options.manifest;
@@ -37,7 +38,8 @@ module.exports = yeoman.generators.Base.extend({
     _.each(permissions, function(perm, name) {
       var choice = {
         key: name,
-        name: perm.status ? name + ' (' + perm.status + ')' : name
+        name: name + (perm.status ? chalk.dim.grey(' (' + perm.status + ')') : ''),
+        value: name
       }
 
       choices.push(choice);

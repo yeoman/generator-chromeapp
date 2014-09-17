@@ -22,7 +22,8 @@
   "dependencies": {
     "yeoman-generator": "^0.17.0",
     "rimraf": "~2.2.0",
-    "lodash": "~2.3.0"
+    "lodash": "~2.3.0",
+    "chalk": "^0.5.1"
   },
   "peerDependencies": {
     "yo": ">=1.2.0",
