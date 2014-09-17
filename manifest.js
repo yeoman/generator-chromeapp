@@ -296,7 +296,7 @@ manifest.prototype.setPermissions = function(newPerms) {
 
   _.each(newPerms, function(newPerm) {
     //Remove (dev) from new features
-    newPerm = (_.isString(newPerm) && newPerm.indexOf(' (dev)') > 0)  ? newPerm.substr(0,newPerm.indexOf(' (dev)')) : newPerm;
+    newPerm = newPerm.replace(' (dev)', '');
 
     // Determine which type of new permission
     var permDesc = _.isString(newPerm) ? Permissions[newPerm] : _.isObject(newPerm) && newPerm;
