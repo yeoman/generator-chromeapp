@@ -145,7 +145,7 @@ var Permissions = {
   'mediaGalleries': {
     availability: 'app',
     permission: {
-      'mediaGalleries': ['read', 'copyTo', 'allAutoDetected']
+      'mediaGalleries': ['read', 'delete', 'copyTo', 'allAutoDetected']
     }
   },
   'notifications': {
