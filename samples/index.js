@@ -60,6 +60,8 @@ function clone(username, repo, branch, cb) {
 
     clone.directory = function directory(source, destination, cb) {
       var root = self.sourceRoot();
+      // Add prefix path of GoogleChrome/chrome-app-samples
+      source = 'samples/' + source;
       self.sourceRoot(cache);
       self.directory(source, destination);
       self.conflicter.resolve(function (err) {
@@ -153,10 +155,10 @@ module.exports = yeoman.generators.Base.extend({
       this.options['skip-install'] = true;
       return;
     }
-    
+
     // set source root path to templates
     this.sourceRoot(path.join(__dirname, 'templates'));
-    
+
     this.copy('_package.json', 'package.json');
     this.template('Gruntfile.js', 'Gruntfile.js');
 
@@ -186,7 +188,7 @@ module.exports = yeoman.generators.Base.extend({
     if (!manifest) {
       throw 'manifest.json has a problem';
     }
-    
+
     // add reload script into manifest.json in sample app
     manifest.app.background.scripts.push('chromereload.js');
     this.writeFileFromString(JSON.stringify(manifest, null, 4), manifestPath);
