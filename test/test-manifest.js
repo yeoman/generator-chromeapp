@@ -65,7 +65,7 @@ describe('Chromeapp generator', function () {
       // fileSystem permission
       ['app/manifest.json', /\s+"fileSystem": \[\s+"write",\s+"retainEntries",\s+"directory"\s+\]/],
       // mediaGalleries permission
-      ['app/manifest.json', /\s+"mediaGalleries": \[\s+"read",\s+"copyTo",\s+"allAutoDetected"\s+\]/],
+      ['app/manifest.json', /\s+"mediaGalleries": \[\s+"read",\s+"delete",\s+"copyTo",\s+"allAutoDetected"\s+\]/],
       // socket permission
       ['app/manifest.json', /\s+"socket": \[\s+"tcp-connect:\*:\*",\s+"tcp-listen:\*:8080"\s+\]/]
     ];
