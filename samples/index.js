@@ -55,7 +55,7 @@ function clone(username, repo, branch, cb) {
       return cb(err);
     }
 
-    var files = expandDirs(cache);
+    var files = expandDirs(path.join(cache, 'samples'));
     var clone = {};
 
     clone.directory = function directory(source, destination, cb) {
