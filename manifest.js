@@ -9,16 +9,15 @@
  */
 
 var _ = require('lodash');
-
 var Permissions = {
-  'adview': {
+  adview: {
     availability: 'app',
     status: 'dev'
   },
-  'alarms': {
+  alarms: {
     availability: 'both'
   },
-  'activeTab': {
+  activeTab: {
     availability: 'extension'
   },
   'app.runtime': {
@@ -27,176 +26,176 @@ var Permissions = {
   'app.window': {
     availability: 'app'
   },
-  'audio': {
+  audio: {
     availability: 'app',
     status: 'dev'
   },
-  'audioCapture': {
+  audioCapture: {
     availability: 'app'
   },
-  'background': {
+  background: {
     availability: 'extension'
   },
-  'bluetooth': {
+  bluetooth: {
     availability: 'app',
     status: 'dev'
   },
-  'bookmarks': {
+  bookmarks: {
     availability: 'extension'
   },
-  'browsingData': {
+  browsingData: {
     availability: 'extension'
   },
-  'clipboardRead': {
+  clipboardRead: {
     availability: 'both'
   },
-  'clipboardWrite': {
+  clipboardWrite: {
     availability: 'both'
   },
-  'contentSettings': {
+  contentSettings: {
     availability: 'extension'
   },
-  'contextMenus': {
+  contextMenus: {
     availability: 'both'
   },
-  'cookies': {
+  cookies: {
     availability: 'extension'
   },
-  'debugger': {
+  debugger: {
     availability: 'extension'
   },
-  'declarativeContent': {
+  declarativeContent: {
     availability: 'extension',
     status: 'dev'
   },
-  'declarativeWebRequest': {
+  declarativeWebRequest: {
     availability: 'extension',
     status: 'dev'
   },
-  'desktopCapture': {
+  desktopCapture: {
     availability: 'both',
     status: 'dev'
   },
-  'diagnostics': {
+  diagnostics: {
     availability: 'app',
     status: 'dev'
   },
-  'dns': {
+  dns: {
     availability: 'both',
     status: 'dev'
   },
-  'experimental': {
+  experimental: {
     availability: 'both'
   },
-  'fileBrowserHandler': {
+  fileBrowserHandler: {
     availability: 'both',
     field: {
-      'file_browser_handlers': {
-        'id': 'upload',
-        'default_title': 'File browser',
-        'file_filters': [
+      file_browser_handlers: {
+        id: 'upload',
+        default_title: 'File browser',
+        file_filters: [
           'filesystem:*.*'
         ]
       }
     }
   },
-  'fileSystem': {
+  fileSystem: {
     availability: 'app',
     permission: {
-      'fileSystem': ['write', 'retainEntries', 'directory']
+      fileSystem: ['write', 'retainEntries', 'directory']
     }
   },
-  'fontSettings': {
+  fontSettings: {
     availability: 'extension'
   },
-  'fullscreen': {
+  fullscreen: {
     availability: 'app'
   },
-  'gcm': {
+  gcm: {
     availability: 'app',
     status: 'dev'
   },
-  'geolocation': {
+  geolocation: {
     availability: 'both'
   },
-  'history': {
+  history: {
     availability: 'extension'
   },
-  'identity': {
+  identity: {
     availability: 'both'
   },
-  'idle': {
+  idle: {
     availability: 'both'
   },
-  'infobars': {
+  infobars: {
     availability: 'both',
     status: 'dev',
     resource: {
-      'icons': {'48': 'images/icon-48.png'}
+      icons: {48: 'images/icon-48.png'}
     }
   },
-  'location': {
+  location: {
     availability: 'both',
     status: 'dev'
   },
-  'management': {
+  management: {
     availability: 'extension'
   },
-  'mediaGalleries': {
+  mediaGalleries: {
     availability: 'app',
     permission: {
-      'mediaGalleries': ['read', 'delete', 'copyTo', 'allAutoDetected']
+      mediaGalleries: ['read', 'delete', 'copyTo', 'allAutoDetected']
     }
   },
-  'notifications': {
+  notifications: {
     availability: 'both',
     resource: {
-      'web_accessible_resources': 'images/icon-48.png'
+      web_accessible_resources: 'images/icon-48.png'
     }
   },
-  'pageCapture': {
+  pageCapture: {
     availability: 'extension'
   },
-  'pointerLock': {
+  pointerLock: {
     availability: 'app'
   },
-  'power': {
+  power: {
     availability: 'app'
   },
-  'privacy': {
+  privacy: {
     availability: 'extension'
   },
-  'processes': {
+  processes: {
     availability: 'extension',
     status: 'dev'
   },
-  'proxy': {
+  proxy: {
     availability: 'extension'
   },
-  'pushMessaging': {
+  pushMessaging: {
     availability: 'both'
   },
-  'serial': {
+  serial: {
     availability: 'app'
   },
-  'sessions': {
+  sessions: {
     availability: 'extension',
     status: 'dev'
   },
-  'signedInDevices': {
+  signedInDevices: {
     availability: 'both',
     status: 'dev'
   },
-  'socket': {
+  socket: {
     availability: 'app',
     permission: {
-      'socket': []
+      socket: []
     }
   },
-  'storage': {
+  storage: {
     availability: 'both'
   },
-  'syncFileSystem': {
+  syncFileSystem: {
     availability: 'app'
   },
   'system.cpu': {
@@ -213,111 +212,111 @@ var Permissions = {
   'system.storage': {
     availability: 'both'
   },
-  'tabCapture': {
+  tabCapture: {
     availability: 'extension',
     status: 'dev'
   },
-  'tabs': {
+  tabs: {
     availability: 'extension'
   },
-  'topSites': {
+  topSites: {
     availability: 'extension'
   },
-  'tts': {
+  tts: {
     availability: 'both'
   },
-  'ttsEngine': {
+  ttsEngine: {
     availability: 'extension',
     field: {
-      'voices': [{
-        'voice_name': 'Alice',
-        'lang': 'en-US',
-        'gender': 'female',
-        'event_types': ['start', 'marker', 'end']
+      voices: [{
+        voice_name: 'Alice',
+        lang: 'en-US',
+        gender: 'female',
+        event_types: ['start', 'marker', 'end']
       }]
     }
   },
-  'unlimitedStorage': {
+  unlimitedStorage: {
     availability: 'both'
   },
-  'usb': {
+  usb: {
     availability: 'app'
   },
-  'videoCapture': {
+  videoCapture: {
     availability: 'app'
   },
-  'wallpaper': {
+  wallpaper: {
     availability: 'app',
     status: 'dev'
   },
-  'webNavigation': {
+  webNavigation: {
     availability: 'extension'
   },
-  'webRequest': {
+  webRequest: {
     availability: 'extension'
   },
-  'webRequestBlocking': {
+  webRequestBlocking: {
     availability: 'extension'
   },
-  'webview': {
+  webview: {
     availability: 'app'
   }
 };
 
-// Constructor of manifest
-var manifest = module.exports = function Manifest(fields) {
+var Manifest = function (fields) {
   this.fields = _.merge({
-    'name': '__MSG_appName__',
-    'description': '__MSG_appDescription__',
-    'version': '1',
-    'manifest_version': 2,
-    'default_locale': 'en',
-    'permissions': []
+    name: '__MSG_appName__',
+    description: '__MSG_appDescription__',
+    version: '1',
+    manifest_version: 2,
+    default_locale: 'en',
+    permissions: []
   }, fields);
 
   return this;
 };
 
-// Get a permission list by name, type and option
-manifest.query = function(opt) {
-  return _.pick(Permissions, function(i, key) {
+module.exports = Manifest;
+
+Manifest.query = function (opt) {
+  return _.pick(Permissions, function (i, key) {
     if (opt.name) {
-      return (opt.name === key)
+      return (opt.name === key);
     } else {
       return (i.availability === 'both' || i.availability === opt.type) &&
-      (opt.devFeatures || i.status !== 'dev')
+      (opt.devFeatures || i.status !== 'dev');
     }
   }.bind(this));
 };
 
-// Set a new permissions
-manifest.prototype.setPermissions = function(newPerms) {
+Manifest.prototype.setPermissions = function (newPerms) {
   var permissions = [];
 
-  _.each(newPerms, function(newPerm) {
+  _.each(newPerms, function (newPerm) {
     // Determine which type of new permission
     var permDesc = _.isString(newPerm) ? Permissions[newPerm] : _.isObject(newPerm) && newPerm;
 
     // Add new permission list to merge
     permissions.push(permDesc && permDesc.permission ? permDesc.permission : newPerm);
 
-    // Merge field and resource
-    if (permDesc) {
-      if (permDesc.field) {
-        _.merge(this.fields, permDesc.field);
-      }
+    if (!permDesc) {
+      return;
+    }
 
-      if (permDesc.resource) {
-        _.merge(this.fields, permDesc.resource);
-      }
+    if (permDesc.field) {
+      _.merge(this.fields, permDesc.field);
+    }
+
+    if (permDesc.resource) {
+      _.merge(this.fields, permDesc.resource);
     }
   }.bind(this));
 
   // Merge a new permissions
   this.fields.permissions = _.union(this.fields.permissions, permissions);
-}
+};
 
-// Return stringified manifest
-manifest.prototype.stringify = function() {
+// Return stringified Manifest
+Manifest.prototype.stringify = function () {
   return JSON.stringify(this.fields, null, '\t').replace(/\n/g, '\n  ');
 };

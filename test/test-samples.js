@@ -6,11 +6,12 @@ var helpers = require('yeoman-generator').test;
 var assert = require('assert');
 var _ = require('underscore');
 
-describe('Chromeapp:sample Generator', function () {
-  if ('the generator can be required without throwing', function () {
+describe('Chromeapp:sample generator', function () {
+  it('the generator can be required without throwing', function () {
     this.app = require('../app');
   });
 
+  var runGen;
   var options = {
     'skip-install': true,
     'skip-pull': false
@@ -22,15 +23,11 @@ describe('Chromeapp:sample Generator', function () {
     socketPermission:[]
   };
 
-  var runGen;
-
   beforeEach(function () {
     runGen = helpers
       .run(path.join(__dirname, '../samples'))
       .inDir(path.join(__dirname, 'temp'))
-      .withGenerators([
-        [helpers.createDummyGenerator(), 'mocha:app']
-      ]);
+      .withGenerators([[helpers.createDummyGenerator(), 'mocha:app']]);
   });
 
   it('should create expected files', function (done) {
@@ -44,19 +41,22 @@ describe('Chromeapp:sample Generator', function () {
     ];
 
     var prompts = {
-      'appname': 'analytics',
-      'overwrite': true
+      appName: 'analytics',
+      overwrite: true
     };
 
     this.timeout(10000);
 
-    runGen.withOptions(options).withPrompt(prompts).on('end', function () {
-      try {
-        assert.file(expected);
-        done();
-      } catch (e) {
-        done(e);
-      }
-    });
+    runGen
+      .withOptions(options)
+      .withPrompt(prompts)
+      .on('end', function () {
+        try {
+          assert.file(expected);
+          done();
+        } catch (err) {
+          done(err);
+        }
+      });
   });
 });

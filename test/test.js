@@ -7,10 +7,11 @@ var assert = require('assert');
 var _ = require('underscore');
 
 describe('Chromeapp generator', function () {
-  if ('the generator can be required without throwing', function () {
+  it('the generator can be required without throwing', function () {
     this.app = require('../app');
   });
 
+  var runGen;
   var options = {
     'skip-install': true
   };
@@ -20,8 +21,6 @@ describe('Chromeapp generator', function () {
     matchPatterns: [],
     socketPermission:[]
   };
-
-  var runGen;
 
   beforeEach(function () {
     runGen = helpers
@@ -45,31 +44,35 @@ describe('Chromeapp generator', function () {
       'app/index.html'
     ];
 
-    runGen.withOptions(options).withPrompt(
-      _.extend(prompts, {'appName': 'temp'})
-    ).on('end', function () {
-      assert.file(expected);
-      assert.fileContent([
-        ['bower.json', /"name": "temp"/],
-        ['package.json', /"name": "temp"/]
-      ]);
-      done();
-    });
+    runGen
+      .withOptions(options)
+      .withPrompt(_.extend(prompts, {appName: 'temp'}))
+      .on('end', function () {
+        assert.file(expected);
+        assert.fileContent([
+          ['bower.json', /"name": "temp"/],
+          ['package.json', /"name": "temp"/]
+        ]);
+
+        done();
+      });
   });
 
   it('should populate appName.message', function (done) {
-    runGen.withOptions(options).withPrompt(
-      _.extend(prompts, {
-        'appName': 'Paul',
-        'appDescription': 'PauL is Awesome',
-      })
-    ).on('end', function () {
-      assert.fileContent([
-        ['app/_locales/en/messages.json', /("message": "Paul")/],
-        ['app/_locales/en/messages.json', /"message": "PauL is Awesome"/]
-      ]);
-      done();
-    });
+    runGen
+      .withOptions(options)
+      .withPrompt(_.extend(prompts, {
+        appName: 'Paul',
+        appDescription: 'PauL is Awesome',
+      }))
+      .on('end', function () {
+        assert.fileContent([
+          ['app/_locales/en/messages.json', /("message": "Paul")/],
+          ['app/_locales/en/messages.json', /"message": "PauL is Awesome"/]
+        ]);
+
+        done();
+      });
   });
 
   it('should create coffee files', function (done) {
@@ -79,14 +82,16 @@ describe('Chromeapp generator', function () {
       'app/scripts/chromereload.coffee',
     ];
 
-    runGen.withOptions(_.extend(options, {'coffee': true})).withPrompt(
-      _.extend(prompts, {
-        'appName': 'Jimmy',
-        'appDescription': 'Jimmy is also Awesome',
-      })
-    ).on('end', function () {
-      assert.file(expected);
-      done();
-    });
+    runGen
+      .withOptions(_.extend(options, {coffee: true}))
+      .withPrompt(
+        _.extend(prompts, {
+          appName: 'Jimmy',
+          appDescription: 'Jimmy is also Awesome',
+        }))
+      .on('end', function () {
+        assert.file(expected);
+        done();
+      });
   });
 });

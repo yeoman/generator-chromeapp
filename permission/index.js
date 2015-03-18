@@ -5,20 +5,19 @@ var yeoman = require('yeoman-generator');
 var path = require('path');
 var fs = require('fs');
 var _ = require('lodash');
-var manifest = require('../manifest');
 var chalk = require('chalk');
+var manifest = require('../manifest');
 
 module.exports = yeoman.generators.Base.extend({
   constructor: function () {
     yeoman.generators.Base.apply(this, arguments);
 
-    var dest = path.join(process.cwd(), '/app/manifest.json');
+    var dest = path.join(process.cwd(), 'app/manifest.json');
 
     // load the manifest.json if already exist
     if (this.options.manifest) {
       this.manifest = this.options.manifest;
-    }
-    else if (fs.existsSync(dest)) {
+    } else if (fs.existsSync(dest)) {
       this.log.info('Load manifest.json');
       this.manifest = new manifest(JSON.parse(this.read(dest)));
     } else {
@@ -29,27 +28,25 @@ module.exports = yeoman.generators.Base.extend({
   askForPermissions: function () {
     var cb = this.async();
     var currentPerms = this.manifest.fields.permissions;
+    var choices = [];
     var permissions = manifest.query({
       type: 'app',
       devFeatures: true
     });
-    var choices = [];
 
-    _.each(permissions, function(perm, name) {
-      var choice = {
+    _.each(permissions, function (perm, name) {
+      choices.push({
         key: name,
         name: name + (perm.status ? chalk.dim.grey(' (' + perm.status + ')') : ''),
         value: name
-      }
-
-      choices.push(choice);
+      });
     });
 
     var prompt = {
       type: 'checkbox',
       name: 'permissions',
       message: 'Select a permissions for Chrome App',
-      paginated : true,
+      paginated: true,
       choices: choices
     };
 
@@ -87,9 +84,9 @@ module.exports = yeoman.generators.Base.extend({
         return patterns && patterns.indexOf(pattern) !== -1;
       }
 
-      // Push match-patterns wichi user has selected.
-      if (hasPattern('allURLs'))
+      if (hasPattern('allURLs')) {
         this.permissions.push('<all_urls>');
+      }
 
       if (hasPattern('httpScheme')) {
         this.permissions.push('http://*/*');
@@ -109,32 +106,35 @@ module.exports = yeoman.generators.Base.extend({
   },
 
   askForSocketPermission: function () {
-    if (_.indexOf(this.permissions, 'socket') !== -1) {
-      var cb = this.async();
-
-      var prompt = {
-        type: 'checkbox',
-        name: 'socketPermission',
-        message: 'Select a Socket permission rules',
-        choices: [{
-          name: 'TCP connecting and listening rules',
-          value: ['tcp-listen:*:*', 'tcp-connect:*:*']
-        }, {
-          name: 'UDP receiving and sending rules',
-          value: ['udp-bind:*:*', 'udp-send-to:*:*']
-        }],
-        filter: function(val) {
-          return _.union(val[0], val[1] ? val[1] : []);
-        }
-      };
-
-      this.prompt(prompt, function (answers) {
-        var perm = manifest.query({name: 'socket'});
-        perm.socket.permission.socket = answers.socketPermission;
-        this.manifest.setPermissions(perm);
-        cb();
-      }.bind(this));
+    if (_.indexOf(this.permissions, 'socket') === -1) {
+      return;
     }
+
+    var cb = this.async();
+    var prompt = {
+      type: 'checkbox',
+      name: 'socketPermission',
+      message: 'Select a Socket permission rules',
+      choices: [{
+        name: 'TCP connecting and listening rules',
+        value: ['tcp-listen:*:*', 'tcp-connect:*:*']
+      }, {
+        name: 'UDP receiving and sending rules',
+        value: ['udp-bind:*:*', 'udp-send-to:*:*']
+      }],
+      filter: function (val) {
+        return _.union(val[0], val[1] ? val[1] : []);
+      }
+    };
+
+    this.prompt(prompt, function (answers) {
+      var perm = manifest.query({name: 'socket'});
+
+      perm.socket.permission.socket = answers.socketPermission;
+      this.manifest.setPermissions(perm);
+
+      cb();
+    }.bind(this));
   },
 
   app: function () {

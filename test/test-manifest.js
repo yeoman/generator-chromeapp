@@ -7,11 +7,12 @@ var assert = require('assert');
 var _ = require('underscore');
 var Manifest = require('../manifest');
 
-describe('Chromeapp generator', function () {
-  if ('the generator can be required without throwing', function () {
+describe('Chromeapp:permission generator', function () {
+  it('the generator can be required without throwing', function () {
     this.app = require('../app');
   });
 
+  var runGen;
   var options = {
     'skip-install': true
   };
@@ -22,24 +23,21 @@ describe('Chromeapp generator', function () {
     socketPermission:[]
   };
 
-  var runGen;
-
-  beforeEach(function (done) {
+  beforeEach(function () {
     runGen = helpers
       .run(path.join(__dirname, '../permission'))
       .inDir(path.join(__dirname, 'temp'))
-      .withGenerators([
-        [helpers.createDummyGenerator(), 'mocha:app']
-      ]);
+      .withGenerators([[helpers.createDummyGenerator(), 'mocha:app']]);
   });
 
   it('should have an empty permissions array', function (done) {
-    runGen.withOptions(options).withPrompt(prompts).on('end', function () {
-      assert.fileContent([
-        ['app/manifest.json', /"permissions": \[\]/],
-      ]);
-      done();
-    });
+    runGen
+      .withOptions(options)
+      .withPrompt(prompts)
+      .on('end', function () {
+        assert.fileContent([['app/manifest.json', /"permissions": \[\]/]]);
+        done();
+      });
   });
 
   it('should populate all of permissions', function (done) {
@@ -64,7 +62,7 @@ describe('Chromeapp generator', function () {
       ['app/manifest.json', /\s+"socket": \[\s+"tcp-connect:\*:\*",\s+"tcp-listen:\*:8080"\s+\]/]
     ];
 
-    _.each(permissions, function(perm, permName) {
+    _.each(permissions, function (perm, permName) {
       if (perm.permission) {
         return;
       }
@@ -72,15 +70,24 @@ describe('Chromeapp generator', function () {
       expectedContents.push(['app/manifest.json', new RegExp(permName)]);
     });
 
-    runGen.withOptions(options).withPrompt(
-      _.extend(prompts, {
+    runGen
+      .withOptions(options)
+      .withPrompt(_.extend(prompts, {
         permissions: _.keys(permissions),
-        matchPatterns: ['allURLs', 'httpScheme', 'localhost', 'extensionScheme'],
-        socketPermission: ['tcp-connect:*:*', 'tcp-listen:*:8080']
-      })
-    ).on('end', function () {
-      assert.fileContent(expectedContents);
-      done();
-    });
+        matchPatterns: [
+          'allURLs',
+          'httpScheme',
+          'localhost',
+          'extensionScheme'
+        ],
+        socketPermission: [
+          'tcp-connect:*:*',
+          'tcp-listen:*:8080'
+        ]
+      }))
+      .on('end', function () {
+        assert.fileContent(expectedContents);
+        done();
+      });
   });
 });

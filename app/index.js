@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 var path = require('path');
 var util = require('util');
@@ -28,28 +28,27 @@ module.exports = yeoman.generators.Base.extend({
       }
     });
 
-
     this.option('test-framework', {
       desc: 'Test framework to be invoked',
       type: String,
       defaults: 'mocha'
     });
-    this.testFramework = this.options['test-framework'];
 
     this.option('coffee', {
       desc: 'Use CoffeeScript',
       type: Boolean,
       defaults: false
     });
-    this.coffee = this.options.coffee;
 
     this.option('compass', {
       desc: 'Use Compass',
       type: Boolean,
       defaults: false
     });
-    this.compass = this.options.compass;
 
+    this.testFramework = this.options['test-framework'];
+    this.coffee = this.options.coffee;
+    this.compass = this.options.compass;
     this.pkg = require('../package.json');
   },
 
@@ -65,10 +64,14 @@ module.exports = yeoman.generators.Base.extend({
       default: 'My Chrome App'
     }];
 
-    this.prompt(prompts, function(answers) {
-      var encode = function(str) {return str && str.replace(/\"/g, '\\"');};
+    this.prompt(prompts, function (answers) {
+      function encode(str) {
+        return str && str.replace(/\"/g, '\\"');
+      }
+
       this.appName = encode(answers.appName);
       this.appDescription = encode(answers.appDescription);
+
       cb();
     }.bind(this));
   },
@@ -77,16 +80,16 @@ module.exports = yeoman.generators.Base.extend({
     this.template('Gruntfile.js');
   },
 
-  packageJSON: function() {
+  packageJSON: function () {
     this.template('_package.json', 'package.json');
   },
 
-  git: function() {
+  git: function () {
     this.copy('gitignore', '.gitignore');
     this.copy('gitattributes', '.gitattributes');
   },
 
-  bower: function() {
+  bower: function () {
     this.copy('bowerrc', '.bowerrc');
     this.copy('_bower.json', 'bower.json');
   },
@@ -113,10 +116,10 @@ module.exports = yeoman.generators.Base.extend({
     this.template('index.html', 'app/index.html', this);
     this.template('_locales/en/messages.json', 'app/_locales/en/messages.json', this);
   },
-  
-  permission: function(done) {
-    this.composeWith('chromeapp:permission', { 
-      options: { manifest: this.manifest }
+
+  permission: function () {
+    this.composeWith('chromeapp:permission', {
+      options: {manifest: this.manifest}
     });
   },
 
