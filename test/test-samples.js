@@ -7,10 +7,6 @@ var assert = require('assert');
 var _ = require('underscore');
 
 describe('Chromeapp:sample generator', function () {
-  it('the generator can be required without throwing', function () {
-    this.app = require('../app');
-  });
-
   var runGen;
   var options = {
     'skip-install': true,
@@ -23,7 +19,7 @@ describe('Chromeapp:sample generator', function () {
     socketPermission:[]
   };
 
-  beforeEach(function () {
+  before(function () {
     runGen = helpers
       .run(path.join(__dirname, '../samples'))
       .inDir(path.join(__dirname, 'temp'))
@@ -44,8 +40,6 @@ describe('Chromeapp:sample generator', function () {
       appName: 'analytics',
       overwrite: true
     };
-
-    this.timeout(10000);
 
     runGen
       .withOptions(options)

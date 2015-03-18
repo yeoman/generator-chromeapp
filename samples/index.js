@@ -76,7 +76,7 @@ function cloneSample(username, repo, branch, cb) {
       // Add prefix path of GoogleChrome/chrome-app-samples
       source = 'samples/' + source;
       self.sourceRoot(cache);
-      self.directory(source, destination);
+      self.bulkDirectory(source, destination);
       self.conflicter.resolve(function (err) {
         self.sourceRoot(root);
         cb();
