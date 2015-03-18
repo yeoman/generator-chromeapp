@@ -12,7 +12,7 @@
   "main": "app/index.js",
   "repository": "yeoman/generator-chromeapp",
   "scripts": {
-    "test": "mocha --reporter spec"
+    "test": "mocha --timeout 100000 --reporter spec"
   },
   "dependencies": {
     "chalk": "^1.0.0",
