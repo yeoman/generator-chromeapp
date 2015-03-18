@@ -83,7 +83,9 @@ module.exports = yeoman.generators.Base.extend({
     this.prompt(prompt, function (answers) {
       var patterns = answers.matchPatterns;
 
-      function hasPattern(pattern) {return patterns.indexOf(pattern) !== -1;};
+      function hasPattern(pattern) {
+        return patterns && patterns.indexOf(pattern) !== -1;
+      }
 
       // Push match-patterns wichi user has selected.
       if (hasPattern('allURLs'))
