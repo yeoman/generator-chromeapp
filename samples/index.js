@@ -8,7 +8,7 @@ var fs = require('fs');
 var rimraf = require('rimraf');
 
 // clone function, tweak the from action.remote
-function clone(username, repo, branch, cb) {
+function cloneSample(username, repo, branch, cb) {
   var self = this;
   var cache, git;
 
@@ -80,11 +80,6 @@ module.exports = yeoman.generators.Base.extend({
   constructor: function () {
     yeoman.generators.Base.apply(this, arguments);
 
-    // extend generator with clone
-    this._.extend(yeoman.generators.Base.prototype, {
-      clone: clone
-    });
-
     this.on('end', function () {
       this.installDependencies({ skipInstall: this.options['skip-install'] });
     });
@@ -102,7 +97,7 @@ module.exports = yeoman.generators.Base.extend({
     self.log('Checking for google chrome-app-sample repository on github');
 
     // clone or pull from https://github.com/GoogleChrome/chrome-app-samples.git
-    this.clone('GoogleChrome', 'chrome-app-samples.git', 'master', function(err, clone, files) {
+    cloneSample.call(this, 'GoogleChrome', 'chrome-app-samples.git', 'master', function(err, clone, files) {
       var prompt = {
         type: 'list',
         name: 'appname',
