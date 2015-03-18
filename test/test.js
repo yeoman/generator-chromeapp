@@ -23,20 +23,14 @@ describe('Chromeapp generator', function () {
 
   var runGen;
 
-  beforeEach(function (done) {
-    helpers.testDirectory(path.join(__dirname, 'temp'), function (err) {
-      if (err) {
-        return done(err);
-      }
-
-      runGen = helpers
-        .run(path.join(__dirname, '../app'))
-        .withGenerators([
-          [helpers.createDummyGenerator(), 'chromeapp:permission'],
-          [helpers.createDummyGenerator(), 'mocha:app']
-        ]);
-      done();
-    });
+  beforeEach(function () {
+    runGen = helpers
+      .run(path.join(__dirname, '../app'))
+      .inDir(path.join(__dirname, 'temp'))
+      .withGenerators([
+        [helpers.createDummyGenerator(), 'chromeapp:permission'],
+        [helpers.createDummyGenerator(), 'mocha:app']
+      ]);
   });
 
   it('should create expected files', function (done) {
@@ -52,7 +46,7 @@ describe('Chromeapp generator', function () {
     ];
 
     runGen.withOptions(options).withPrompt(
-      _.extend(prompts, {'name': 'temp'})
+      _.extend(prompts, {'appName': 'temp'})
     ).on('end', function () {
       assert.file(expected);
       assert.fileContent([

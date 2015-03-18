@@ -24,19 +24,13 @@ describe('Chromeapp:sample Generator', function () {
 
   var runGen;
 
-  beforeEach(function (done) {
-    helpers.testDirectory(path.join(__dirname, 'temp'), function (err) {
-      if (err) {
-        return done(err);
-      }
-
-      runGen = helpers
-        .run(path.join(__dirname, '../samples'))
-        .withGenerators([
-          [helpers.createDummyGenerator(), 'mocha:app']
-        ]);
-      done();
-    });
+  beforeEach(function () {
+    runGen = helpers
+      .run(path.join(__dirname, '../samples'))
+      .inDir(path.join(__dirname, 'temp'))
+      .withGenerators([
+        [helpers.createDummyGenerator(), 'mocha:app']
+      ]);
   });
 
   it('should create expected files', function (done) {

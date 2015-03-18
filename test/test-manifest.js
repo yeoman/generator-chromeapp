@@ -25,18 +25,12 @@ describe('Chromeapp generator', function () {
   var runGen;
 
   beforeEach(function (done) {
-    helpers.testDirectory(path.join(__dirname, 'temp'), function (err) {
-      if (err) {
-        return done(err);
-      }
-
-      runGen = helpers
-        .run(path.join(__dirname, '../permission'))
-        .withGenerators([
-          [helpers.createDummyGenerator(), 'mocha:app']
-        ]);
-      done();
-    });
+    runGen = helpers
+      .run(path.join(__dirname, '../permission'))
+      .inDir(path.join(__dirname, 'temp'))
+      .withGenerators([
+        [helpers.createDummyGenerator(), 'mocha:app']
+      ]);
   });
 
   it('should have an empty permissions array', function (done) {
