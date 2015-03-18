@@ -6,6 +6,7 @@ var https = require('https');
 var path = require('path');
 var fs = require('fs');
 var rimraf = require('rimraf');
+var shell = require('shelljs');
 
 // clone function, tweak the from action.remote
 function cloneSample(username, repo, branch, cb) {
@@ -13,7 +14,7 @@ function cloneSample(username, repo, branch, cb) {
   var cache, git;
 
   function shellExec(command, cb) {
-    return cb(self.shell.exec(command, { silent: false }).code !== 0) ?
+    return cb(shell.exec(command, { silent: false }).code !== 0) ?
             undefined : 'Failed shell execution, ' + command;
   };
 
