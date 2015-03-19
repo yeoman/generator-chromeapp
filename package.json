@@ -1,6 +1,6 @@
 {
   "name": "generator-chromeapp",
-  "version": "0.2.17",
+  "version": "0.2.18",
   "description": "Scaffold out a Chrome app",
   "keywords": [
     "yeoman-generator",
