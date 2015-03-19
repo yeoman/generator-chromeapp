@@ -19,7 +19,7 @@ describe('Chromeapp:sample generator', function () {
     socketPermission:[]
   };
 
-  before(function () {
+  beforeEach(function () {
     runGen = helpers
       .run(path.join(__dirname, '../samples'))
       .inDir(path.join(__dirname, 'temp'))
@@ -38,6 +38,29 @@ describe('Chromeapp:sample generator', function () {
 
     var prompts = {
       appName: 'analytics',
+      overwrite: true
+    };
+
+    runGen
+      .withOptions(options)
+      .withPrompt(prompts)
+      .on('end', function () {
+        try {
+          assert.file(expected);
+          done();
+        } catch (err) {
+          done(err);
+        }
+      });
+  });
+
+  it('should be copied manifest with comments', function (done) {
+    var expected = [
+      'package.json'
+    ];
+
+    var prompts = {
+      appName: 'identity',
       overwrite: true
     };
 

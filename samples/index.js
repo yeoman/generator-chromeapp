@@ -194,14 +194,23 @@ module.exports = yeoman.generators.Base.extend({
     }
 
     manifestPath = path.join(process.cwd(), manifestPath[0]);
-    manifest = JSON.parse(this.readFileAsString(manifestPath));
+    manifest = this.readFileAsString(manifestPath);
 
-    if (!manifest) {
-      throw new Error('manifest.json has a problem');
+    try {
+      manifest = JSON.parse(manifest);
+      manifest.app.background.scripts.push('chromereload.js');
+      // add reload script into manifest.json in sample app
+      manifest = JSON.stringify(manifest, null, 4);
+    } catch (e) {
+      // ignore error in manifest, write manifest with origin content
+      // Finding background script and Using replace to add chromereload.js
+      var rx = /\"app\"\s*:\s*\{\s*\"background\"\s*:\s*\{\s*\"scripts\"\s*:\s*\[/ig;
+      var matches = rx.exec(manifest);
+      if (matches) {
+        manifest = manifest.replace(matches[0], matches[0] + '"chromereload.js", ');
+      }
     }
 
-    // add reload script into manifest.json in sample app
-    manifest.app.background.scripts.push('chromereload.js');
-    this.writeFileFromString(JSON.stringify(manifest, null, 4), manifestPath);
+    this.writeFileFromString(manifest, manifestPath);
   }
 });
