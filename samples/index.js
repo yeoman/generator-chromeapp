@@ -24,12 +24,12 @@ function cloneSample(username, repo, branch, cb) {
 
   function expandDirs(cwd) {
     return fs.readdirSync(cwd).filter(function (filepath) {
-        if (filepath.indexOf('.') === 0) {
-          return;
-        }
+      if (filepath.indexOf('.') === 0) {
+        return;
+      }
 
-        return fs.statSync(path.join(cwd, filepath)).isDirectory();
-      });
+      return fs.statSync(path.join(cwd, filepath)).isDirectory();
+    });
   }
 
   if (!cb) {
@@ -201,11 +201,12 @@ module.exports = yeoman.generators.Base.extend({
       manifest.app.background.scripts.push('chromereload.js');
       // add reload script into manifest.json in sample app
       manifest = JSON.stringify(manifest, null, 4);
-    } catch (e) {
+    } catch (err) {
       // ignore error in manifest, write manifest with origin content
       // Finding background script and Using replace to add chromereload.js
       var rx = /\"app\"\s*:\s*\{\s*\"background\"\s*:\s*\{\s*\"scripts\"\s*:\s*\[/ig;
       var matches = rx.exec(manifest);
+
       if (matches) {
         manifest = manifest.replace(matches[0], matches[0] + '"chromereload.js", ');
       }
