@@ -35,6 +35,7 @@
   "files": [
     "app",
     "permission",
-    "samples"
+    "samples",
+    "manifest.js"
   ]
 }
