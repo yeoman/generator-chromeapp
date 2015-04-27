@@ -318,5 +318,5 @@ Manifest.prototype.setPermissions = function (newPerms) {
 
 // Return stringified Manifest
 Manifest.prototype.stringify = function () {
-  return JSON.stringify(this.fields, null, '\t').replace(/\n/g, '\n  ');
+  return JSON.stringify(this.fields, null, 2);
 };
