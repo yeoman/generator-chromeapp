@@ -84,7 +84,7 @@ module.exports = function (grunt) {
       },
       server: {
         options: {
-          middleware: function(connect) {
+          middleware: function (connect) {
             return [
               connect.static('.tmp'),
               connect().use('/bower_components', connect.static('./bower_components')),
@@ -391,7 +391,7 @@ module.exports = function (grunt) {
     compress: {
       dist: {
         options: {
-          archive: function() {
+          archive: function () {
             var manifest = grunt.file.readJSON('app/manifest.json');
             return 'package/<%= appname %>-' + manifest.version + '.zip';
           }
