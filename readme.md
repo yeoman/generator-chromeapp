@@ -37,14 +37,14 @@ Create manifest.json or append permission into manifest.json. You can choose per
 
 Example: 
 ```bash
-yo chromeapp:permmision
+yo chromeapp:permission
 ```
 
 ### Samples
 
 ![](http://i.imgur.com/OgPhpfA.gif)
 
-You can create a new Chrome App by the [google-chrome-app samples](https://github.com/GoogleChrome/chrome-app-samples) on github repository.
+You can create a new Chrome App with the [google-chrome-app samples](https://github.com/GoogleChrome/chrome-app-samples) on GitHub.
 
 Example: 
 ```bash
@@ -86,7 +86,7 @@ Support two preview mode. LiveReload/run/debug your Chrome App on Chrome browser
 
 * `--skip-pull`
   
-  Skips to `pull` command of `git` to check the [google-chrome-app samples](https://github.com/GoogleChrome/chrome-app-samples) on github repository
+  Skips the `pull` command of `git` which checks the [google-chrome-app samples](https://github.com/GoogleChrome/chrome-app-samples) on GitHub
 
 * `--coffee`
 
