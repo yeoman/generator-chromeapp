@@ -1,5 +1,7 @@
 # Chrome App generator [![Build Status](https://secure.travis-ci.org/yeoman/generator-chromeapp.svg?branch=master)](http://travis-ci.org/yeoman/generator-chromeapp)
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/yeoman/generator-chromeapp.svg)](https://greenkeeper.io/)
+
 Maintainer: [Jimmy Moon](https://github.com/ragingwind)
 
 > Chrome Apps boilerplate generator that creates everything you need to get started with development. To test, go to: chrome://extensions, enable Developer mode and load `app` as an unpacked extension.
